@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=AnyBot faces off 1v1 against the default AI to demonstrate how it can effectively run a game at a higher skill level.
+DocInfo/DescShort=N/A
+DocInfo/Name=AnyBot vs. AI (Dusk Towers)
+MapInfo/Player00/Name=Neutral
+MapInfo/Player01/Name=Human
+MapInfo/Player02/Name=AnyBot
+MapInfo/Player03/Name=Hostile
+MapInfo/Player04/Name=Player 4
+MapInfo/Player05/Name=Hostile

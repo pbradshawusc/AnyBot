@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=Aprovecha que es fácil acceder a las expansiones de este mapa y te resultará más sencillo crear un gran ejército. 
+DocInfo/DescShort=1vs1
+DocInfo/Name=Torres del ocaso
+MapInfo/Player00/Name=Neutral
+MapInfo/Player01/Name=Jugador 1
+MapInfo/Player02/Name=Jugador 2
+MapInfo/Player03/Name=Hostil
+MapInfo/Player04/Name=Jugador 4
+MapInfo/Player05/Name=Hostil

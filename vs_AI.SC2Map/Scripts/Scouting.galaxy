@@ -1,0 +1,28 @@
+timer scoutTime;
+trigger t1;
+
+bool InitialScout(bool checkConds, bool runActions) {
+	if(UnitGetType(EventUnitCreatedUnit()) == "SCV") {
+		if(TimerGetRemaining(scoutTime) <= 2) {
+			UnitIssueOrder(EventUnitCreatedUnit(), OrderTargetingPoint(AbilityCommand("move", 0), PointFromName("HumanBase1")), c_orderQueueReplace);
+			
+			TriggerDestroy(t1);
+	
+			return true;
+		}
+	}
+	
+	return false;
+
+}
+
+void ScoutingRegisterTriggers() {
+
+	
+	scoutTime = TimerCreate();
+	TimerStart(scoutTime, 30, false, 0);
+	
+	t1 = TriggerCreate("InitialScout");
+	TriggerAddEventUnitCreated(t1, null, null, null);
+}
+

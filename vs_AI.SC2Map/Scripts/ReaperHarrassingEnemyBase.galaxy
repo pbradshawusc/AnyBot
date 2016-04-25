@@ -1,0 +1,120 @@
+void StutterStepGroupStutter(unit myUnit, unit enemyGroup, unitgroup myUnitGroup) {
+    point enemyPosition = UnitGetPosition(enemyGroup);
+    
+    point myPosition = UnitGroupCenterOfGroup(myUnitGroup);
+    //point myPosition=UnitGetPosition(myUnit);
+    fixed myPositionX = PointGetX(myPosition);
+    fixed myPositionY = PointGetY(myPosition);
+    fixed enemyPositionX = PointGetX(enemyPosition);
+    fixed enemyPositionY = PointGetY(enemyPosition);
+    point targetPosition;
+    point enemyBase = PointFromName("HumanStart");
+    fixed enemyBasePositionX = PointGetX(enemyBase);
+    fixed enemyBasePositionY = PointGetY(enemyBase);
+
+    fixed newPositionX;
+    fixed newPositionY;
+    fixed slope;
+    fixed distanceFromEnemy;
+    fixed distanceFromEnemyBase;
+    //UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, IntToText(gAnyBotArmy_ReaperCount));
+    //UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, StringToText(UnitGetType(enemyGroup)));
+    distanceFromEnemy = SquareRoot(Pow(myPositionX - enemyPositionX, 2) + Pow(myPositionY - enemyPositionY, 2));
+    distanceFromEnemyBase = SquareRoot(Pow(myPositionX - enemyBasePositionX, 2) + Pow(myPositionY - enemyBasePositionY, 2));
+    slope = (enemyPositionY - myPositionY) / (enemyPositionX - myPositionX);
+
+    if (myPositionX < enemyPositionX) {
+      newPositionX = (myPositionX - 2) / SquareRoot( 1 + (slope * slope));
+    } else {
+      newPositionX = (myPositionX + 2) / SquareRoot( 1 + (slope * slope));
+    }
+    newPositionY = ( (newPositionX - myPositionX)) + myPositionY;
+    targetPosition = Point(newPositionX, newPositionY);
+    if(distanceFromEnemy >= 2) {
+      //UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, StringToText("In Stutter."));
+      UnitIssueOrder(myUnit, OrderTargetingUnit(AbilityCommand("attack", 0), enemyGroup), c_orderQueueAddToFront);
+      UnitIssueOrder(myUnit, OrderTargetingPoint(AbilityCommand("move", 0), targetPosition), c_orderQueueAddToFront);
+      UnitGroupIssueOrder(myUnitGroup, OrderTargetingUnit(AbilityCommand("move", 0), myUnit), c_orderQueueAddToFront);
+    } else {
+        //UnitGroupIssueOrder(myUnitGroup, OrderTargetingUnit(AbilityCommand("attack", 0), enemyGroup), c_orderQueueAddToFront);
+        UnitIssueOrder(myUnit, OrderTargetingUnit(AbilityCommand("attack", 0), enemyGroup), c_orderQueueAddToFront);
+    }
+}
+
+bool ReaperEnemyInRange(bool checkConds, bool runActions)
+{
+    unit eventUnit = EventUnit();
+    unit enteringUnit = EventUnitRangeUnit();
+    if (UtilsIsUnitOwnedByAnyBot(eventUnit) || UnitGetOwner(eventUnit) == 0 || UtilsIsUnitEnemyStructure(eventUnit) || SkillCheckCheck()) {
+        return true;
+    } else if (UtilsIsUnitEnemyUnit(eventUnit)) {
+        if (enteringUnit) {
+            if (UnitGroupCount(gCurrentReaperPair, c_unitCountAlive) > 0) {
+        StutterStepGroupStutter(enteringUnit, eventUnit, gCurrentReaperPair);
+    }
+    }
+        return true;
+    }
+return true;
+}
+
+bool ReaperUnitCreated(bool checkConds, bool runActions) {
+    fixed dps = 0;
+    trigger t;
+    int i = 0;
+    string groupNameToUse;
+    bool foundGroup = false;
+
+    if (UtilsIsUnitMyUnit(EventUnitCreatedUnit()) && UnitGetType(EventUnitCreatedUnit()) == "Reaper") {
+
+        groupNameToUse = "ReaperPair" + IntToString(gAnyBotArmy_ReaperCurrentlyBeingCreated);
+        i = 0;
+        for (; i < gAnyBotArmy_ReaperGroupCount; i += 1) {
+            if (gAnyBotArmy_ReaperGroupList[i].groupName == groupNameToUse) {
+                foundGroup = true;
+                UnitGroupAdd(gAnyBotArmy_ReaperGroupList[i].group, EventUnitCreatedUnit());
+                if (UnitGroupCount(gAnyBotArmy_ReaperGroupList[i].group, c_unitCountAlive) == 2) {
+                    UnitGroupIssueOrder(gAnyBotArmy_ReaperGroupList[i].group, OrderTargetingPoint(AbilityCommand("attack", 0), PointFromName("HumanStart")), c_orderQueueReplace);
+                    gAnyBotArmy_ReaperCurrentlyBeingCreated += 1;
+                    gCurrentReaperPair = gAnyBotArmy_ReaperGroupList[i].group;
+                     // Register the dying trigger
+                    t = TriggerCreate("ReaperUnitDied");
+                    TriggerAddEventUnitDied(t, UnitRefFromUnit(EventUnitCreatedUnit()));
+                    
+                    t = TriggerCreate("ReaperEnemyInRange");
+                    TriggerAddEventUnitRange(t, null, UnitGroupUnit(gCurrentReaperPair, 1),  5.0, true);
+                  
+                }
+            }
+        }
+
+        if (foundGroup == false) {
+            // We don't track this group yet, so we should create it
+            gAnyBotArmy_ReaperGroupList[gAnyBotArmy_ReaperGroupCount].groupName = groupNameToUse;
+            gAnyBotArmy_ReaperGroupList[gAnyBotArmy_ReaperGroupCount].group = UnitGroup(null, 2, RegionEmpty(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+            gAnyBotArmy_ReaperGroupList[gAnyBotArmy_ReaperGroupCount].expectedSize = 2;
+            UnitGroupAdd(gAnyBotArmy_ReaperGroupList[gAnyBotArmy_ReaperGroupCount].group, EventUnitCreatedUnit());
+            gAnyBotArmy_ReaperGroupCount += 1;
+        }
+
+       
+    }
+    return true;
+}
+
+bool ReaperUnitDied(bool checkConds, bool runActions) {
+    fixed dps = 0;
+    int i = 0;
+    if (UtilsIsUnitMyUnit(EventUnit()) && UnitGetType(EventUnit()) == "Reaper") {
+        UnitGroupRemove(gCurrentReaperPair, EventUnit());
+    }
+
+    return true;
+}
+
+void ReaperRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("ReaperUnitCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+}

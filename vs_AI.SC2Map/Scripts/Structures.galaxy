@@ -1,0 +1,353 @@
+bool StructuresUnitCreated(bool checkConds, bool runActions) {
+    string unitType = UnitGetType(EventUnitCreatedUnit());
+    trigger t;
+
+    if (UtilsIsUnitMyStructure(EventUnitCreatedUnit())) {
+        t = TriggerCreate("StructuresUnitDied");
+        TriggerAddEventUnitDied(t, UnitRefFromUnit(EventUnitCreatedUnit()));
+
+        if (unitType == "Armory") {
+            gAnyBotStructures_ArmoryList[gAnyBotStructures_ArmoryCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_ArmoryList[gAnyBotStructures_ArmoryCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_ArmoryList[gAnyBotStructures_ArmoryCount].mQueueCount = 0;
+            gAnyBotStructures_ArmoryCount += 1;
+        } else if (unitType == "AutoTurret") {
+            gAnyBotStructures_AutoTurretList[gAnyBotStructures_AutoTurretCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_AutoTurretList[gAnyBotStructures_AutoTurretCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_AutoTurretList[gAnyBotStructures_AutoTurretCount].mQueueCount = 0;
+            gAnyBotStructures_AutoTurretCount += 1;
+        } else if (unitType == "Barracks" || unitType == "BarracksFlying") {
+            gAnyBotStructures_BarracksList[gAnyBotStructures_BarracksCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_BarracksList[gAnyBotStructures_BarracksCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_BarracksList[gAnyBotStructures_BarracksCount].mQueueCount = 0;
+            gAnyBotStructures_BarracksCount += 1;
+        } else if (unitType == "EngineeringBay") {
+            gAnyBotStructures_EngineeringBayList[gAnyBotStructures_EngineeringBayCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_EngineeringBayList[gAnyBotStructures_EngineeringBayCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_EngineeringBayList[gAnyBotStructures_EngineeringBayCount].mQueueCount = 0;
+            gAnyBotStructures_EngineeringBayCount += 1;
+        } else if (unitType == "Bunker") {
+            gAnyBotStructures_BunkerList[gAnyBotStructures_BunkerCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_BunkerList[gAnyBotStructures_BunkerCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_BunkerList[gAnyBotStructures_BunkerCount].mQueueCount = 0;
+            gAnyBotStructures_BunkerCount += 1;
+        } else if (unitType == "CommandCenter" || unitType == "CommandCenterFlying" || unitType == "OrbitalCommand" || unitType == "OrbitalCommandFlying" || unitType == "PlanetaryFortress") {
+            gAnyBotStructures_CommandCenterList[gAnyBotStructures_CommandCenterCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_CommandCenterList[gAnyBotStructures_CommandCenterCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_CommandCenterList[gAnyBotStructures_CommandCenterCount].mQueueCount = 0;
+            gAnyBotStructures_CommandCenterCount += 1;
+        } else if (unitType == "Factory" || unitType == "FactoryFlying") {
+            gAnyBotStructures_FactoryList[gAnyBotStructures_FactoryCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_FactoryList[gAnyBotStructures_FactoryCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_FactoryList[gAnyBotStructures_FactoryCount].mQueueCount = 0;
+            gAnyBotStructures_FactoryCount += 1;
+        } else if (unitType == "FusionCore") {
+            gAnyBotStructures_FusionCoreList[gAnyBotStructures_FusionCoreCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_FusionCoreList[gAnyBotStructures_FusionCoreCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_FusionCoreList[gAnyBotStructures_FusionCoreCount].mQueueCount = 0;
+            gAnyBotStructures_FusionCoreCount += 1;
+        } else if (unitType == "GhostAcademy") {
+            gAnyBotStructures_GhostAcademyList[gAnyBotStructures_GhostAcademyCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_GhostAcademyList[gAnyBotStructures_GhostAcademyCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_GhostAcademyList[gAnyBotStructures_GhostAcademyCount].mQueueCount = 0;
+            gAnyBotStructures_GhostAcademyCount += 1;
+        } else if (unitType == "MissileTurret") {
+            gAnyBotStructures_MissileTurretList[gAnyBotStructures_MissileTurretCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_MissileTurretList[gAnyBotStructures_MissileTurretCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_MissileTurretList[gAnyBotStructures_MissileTurretCount].mQueueCount = 0;
+            gAnyBotStructures_MissileTurretCount += 1;
+        } else if (unitType == "Refinery") {
+            gAnyBotStructures_RefineryList[gAnyBotStructures_RefineryCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_RefineryList[gAnyBotStructures_RefineryCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_RefineryList[gAnyBotStructures_RefineryCount].mQueueCount = 0;
+            gAnyBotStructures_RefineryCount += 1;
+        } else if (unitType == "Starport" || unitType == "StarportFlying") {
+            gAnyBotStructures_StarportList[gAnyBotStructures_StarportCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_StarportList[gAnyBotStructures_StarportCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_StarportList[gAnyBotStructures_StarportCount].mQueueCount = 0;
+            gAnyBotStructures_StarportCount += 1;
+        } else if (unitType == "SupplyDepot" || unitType == "SupplyDepotLowered") {
+            gAnyBotStructures_SupplyDepotList[gAnyBotStructures_SupplyDepotCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_SupplyDepotList[gAnyBotStructures_SupplyDepotCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_SupplyDepotList[gAnyBotStructures_SupplyDepotCount].mQueueCount = 0;
+            gAnyBotStructures_SupplyDepotCount += 1;
+            //gAnyBotBases_BuildingSupplyDepot = false;
+        } else if (unitType == "Reactor" || unitType == "BarracksReactor" || unitType == "FactoryReactor" || unitType == "StarportReactor") {
+            if (unitType == "BarracksReactor") {
+                gAnyBotStructures_BarracksReactors += 1;
+            } else if (unitType == "FactoryReactor") {
+                gAnyBotStructures_FactoryReactors += 1;
+            } else if (unitType == "StarportReactor") {
+                gAnyBotStructures_StarportReactors += 1;
+            }
+            gAnyBotPurchasing_BuildingAddOn = false;
+            gAnyBotStructures_ReactorList[gAnyBotStructures_ReactorCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_ReactorList[gAnyBotStructures_ReactorCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_ReactorList[gAnyBotStructures_ReactorCount].mQueueCount = 0;
+            gAnyBotStructures_ReactorCount += 1;
+        } else if (unitType == "TechLab" || unitType == "BarracksTechLab" || unitType == "FactoryTechLab" || unitType == "StarportTechLab") {
+            if (unitType == "BarracksTechLab") {
+                gAnyBotStructures_BarracksTechLabs += 1;
+            } else if (unitType == "FactoryTechLab") {
+                gAnyBotStructures_FactoryTechLabs += 1;
+            } else if (unitType == "StarportTechLab") {
+                gAnyBotStructures_StarportTechLabs += 1;
+            }
+            gAnyBotPurchasing_BuildingAddOn = false;
+            gAnyBotStructures_TechLabList[gAnyBotStructures_TechLabCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotStructures_TechLabList[gAnyBotStructures_TechLabCount].mRecentBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+            gAnyBotStructures_TechLabList[gAnyBotStructures_TechLabCount].mQueueCount = 0;
+            gAnyBotStructures_TechLabCount += 1;
+        }
+    } else if (UtilsIsUnitEnemyStructure(EventUnitCreatedUnit())) {
+        t = TriggerCreate("StructuresUnitDied");
+        TriggerAddEventUnitDied(t, UnitRefFromUnit(EventUnitCreatedUnit()));
+
+        gEnemyStructures_UnitList[gEnemyStructures_UnitCount].mUnit = EventUnitCreatedUnit();
+        gEnemyStructures_UnitList[gEnemyStructures_UnitCount].mRecentBase = UtilsClosestEnemyBaseForUnit(EventUnitCreatedUnit());
+        gEnemyStructures_UnitCount += 1;
+
+        // Now update lists if necessary
+        if (gEnemyStructures_UnitList[gEnemyStructures_UnitCount - 1].mRecentBase == -1) {
+            DebugLog("Found no base for enemy structure", "Error");
+        }
+        gEnemyBases_BaseExists[gEnemyStructures_UnitList[gEnemyStructures_UnitCount - 1].mRecentBase - 1] = true;
+    }
+
+    return true;
+}
+
+bool StructuresUnitFinishedConstructing(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnitProgressUnit()) == "SupplyDepot") {
+        gAnyBotBases_BuildingSupplyDepot = false;
+        UnitIssueOrder(EventUnitProgressUnit(), Order(AbilityCommand("SupplyDepotLower", 0)), c_orderQueueReplace);
+    }
+
+    return true;
+}
+
+bool StructuresUnitDied(bool checkConds, bool runActions) {
+    string unitType = UnitGetType(EventUnit());
+    int i = 0;
+
+    if (UtilsIsUnitMyStructure(EventUnit())) {
+        if (unitType == "Armory") {
+            for (; i < gAnyBotStructures_ArmoryCount; i += 1) {
+                if (gAnyBotStructures_ArmoryList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_ArmoryCount-1; i += 1) {
+                gAnyBotStructures_ArmoryList[i].mUnit = gAnyBotStructures_ArmoryList[i+1].mUnit;
+                gAnyBotStructures_ArmoryList[i].mRecentBase = gAnyBotStructures_ArmoryList[i+1].mRecentBase;
+                gAnyBotStructures_ArmoryList[i].mQueueCount = gAnyBotStructures_ArmoryList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_ArmoryCount -= 1;
+        } else if (unitType == "AutoTurret") {
+            for (; i < gAnyBotStructures_AutoTurretCount; i += 1) {
+                if (gAnyBotStructures_AutoTurretList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_AutoTurretCount-1; i += 1) {
+                gAnyBotStructures_AutoTurretList[i].mUnit = gAnyBotStructures_AutoTurretList[i+1].mUnit;
+                gAnyBotStructures_AutoTurretList[i].mRecentBase = gAnyBotStructures_AutoTurretList[i+1].mRecentBase;
+                gAnyBotStructures_AutoTurretList[i].mQueueCount = gAnyBotStructures_AutoTurretList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_AutoTurretCount -= 1;
+        } else if (unitType == "Barracks" || unitType == "BarracksFlying") {
+            for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+                if (gAnyBotStructures_BarracksList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_BarracksCount-1; i += 1) {
+                gAnyBotStructures_BarracksList[i].mUnit = gAnyBotStructures_BarracksList[i+1].mUnit;
+                gAnyBotStructures_BarracksList[i].mRecentBase = gAnyBotStructures_BarracksList[i+1].mRecentBase;
+                gAnyBotStructures_BarracksList[i].mQueueCount = gAnyBotStructures_BarracksList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_BarracksCount -= 1;
+        } else if (unitType == "EngineeringBay") {
+            for (; i < gAnyBotStructures_EngineeringBayCount; i += 1) {
+                if (gAnyBotStructures_EngineeringBayList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_EngineeringBayCount-1; i += 1) {
+                gAnyBotStructures_EngineeringBayList[i].mUnit = gAnyBotStructures_EngineeringBayList[i+1].mUnit;
+                gAnyBotStructures_EngineeringBayList[i].mRecentBase = gAnyBotStructures_EngineeringBayList[i+1].mRecentBase;
+                gAnyBotStructures_EngineeringBayList[i].mQueueCount = gAnyBotStructures_EngineeringBayList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_EngineeringBayCount -= 1;
+        } else if (unitType == "Bunker") {
+            for (; i < gAnyBotStructures_BunkerCount; i += 1) {
+                if (gAnyBotStructures_BunkerList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_BunkerCount-1; i += 1) {
+                gAnyBotStructures_BunkerList[i].mUnit = gAnyBotStructures_BunkerList[i+1].mUnit;
+                gAnyBotStructures_BunkerList[i].mRecentBase = gAnyBotStructures_BunkerList[i+1].mRecentBase;
+                gAnyBotStructures_BunkerList[i].mQueueCount = gAnyBotStructures_BunkerList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_BunkerCount -= 1;
+        } else if (unitType == "CommandCenter" || unitType == "CommandCenterFlying" || unitType == "OrbitalCommand" || unitType == "OrbitalCommandFlying" || unitType == "PlanetaryFortress") {
+            for (; i < gAnyBotStructures_CommandCenterCount; i += 1) {
+                if (gAnyBotStructures_CommandCenterList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_CommandCenterCount-1; i += 1) {
+                gAnyBotStructures_CommandCenterList[i].mUnit = gAnyBotStructures_CommandCenterList[i+1].mUnit;
+                gAnyBotStructures_CommandCenterList[i].mRecentBase = gAnyBotStructures_CommandCenterList[i+1].mRecentBase;
+                gAnyBotStructures_CommandCenterList[i].mQueueCount = gAnyBotStructures_CommandCenterList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_CommandCenterCount -= 1;
+        } else if (unitType == "Factory" || unitType == "FactoryFlying") {
+            for (; i < gAnyBotStructures_FactoryCount; i += 1) {
+                if (gAnyBotStructures_FactoryList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_FactoryCount-1; i += 1) {
+                gAnyBotStructures_FactoryList[i].mUnit = gAnyBotStructures_FactoryList[i+1].mUnit;
+                gAnyBotStructures_FactoryList[i].mRecentBase = gAnyBotStructures_FactoryList[i+1].mRecentBase;
+                gAnyBotStructures_FactoryList[i].mQueueCount = gAnyBotStructures_FactoryList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_FactoryCount -= 1;
+        } else if (unitType == "FusionCore") {
+            for (; i < gAnyBotStructures_FusionCoreCount; i += 1) {
+                if (gAnyBotStructures_FusionCoreList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_FusionCoreCount-1; i += 1) {
+                gAnyBotStructures_FusionCoreList[i].mUnit = gAnyBotStructures_FusionCoreList[i+1].mUnit;
+                gAnyBotStructures_FusionCoreList[i].mRecentBase = gAnyBotStructures_FusionCoreList[i+1].mRecentBase;
+                gAnyBotStructures_FusionCoreList[i].mQueueCount = gAnyBotStructures_FusionCoreList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_FusionCoreCount -= 1;
+        } else if (unitType == "GhostAcademy") {
+            for (; i < gAnyBotStructures_GhostAcademyCount; i += 1) {
+                if (gAnyBotStructures_GhostAcademyList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_GhostAcademyCount-1; i += 1) {
+                gAnyBotStructures_GhostAcademyList[i].mUnit = gAnyBotStructures_GhostAcademyList[i+1].mUnit;
+                gAnyBotStructures_GhostAcademyList[i].mRecentBase = gAnyBotStructures_GhostAcademyList[i+1].mRecentBase;
+                gAnyBotStructures_GhostAcademyList[i].mQueueCount = gAnyBotStructures_GhostAcademyList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_GhostAcademyCount -= 1;
+        } else if (unitType == "MissileTurret") {
+            for (; i < gAnyBotStructures_MissileTurretCount; i += 1) {
+                if (gAnyBotStructures_MissileTurretList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_MissileTurretCount-1; i += 1) {
+                gAnyBotStructures_MissileTurretList[i].mUnit = gAnyBotStructures_MissileTurretList[i+1].mUnit;
+                gAnyBotStructures_MissileTurretList[i].mRecentBase = gAnyBotStructures_MissileTurretList[i+1].mRecentBase;
+                gAnyBotStructures_MissileTurretList[i].mQueueCount = gAnyBotStructures_MissileTurretList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_MissileTurretCount -= 1;
+        } else if (unitType == "Refinery") {
+            for (; i < gAnyBotStructures_RefineryCount; i += 1) {
+                if (gAnyBotStructures_RefineryList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_RefineryCount-1; i += 1) {
+                gAnyBotStructures_RefineryList[i].mUnit = gAnyBotStructures_RefineryList[i+1].mUnit;
+                gAnyBotStructures_RefineryList[i].mRecentBase = gAnyBotStructures_RefineryList[i+1].mRecentBase;
+                gAnyBotStructures_RefineryList[i].mQueueCount = gAnyBotStructures_RefineryList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_RefineryCount -= 1;
+        } else if (unitType == "Starport" || unitType == "StarportFlying") {
+            for (; i < gAnyBotStructures_StarportCount; i += 1) {
+                if (gAnyBotStructures_StarportList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_StarportCount-1; i += 1) {
+                gAnyBotStructures_StarportList[i].mUnit = gAnyBotStructures_StarportList[i+1].mUnit;
+                gAnyBotStructures_StarportList[i].mRecentBase = gAnyBotStructures_StarportList[i+1].mRecentBase;
+                gAnyBotStructures_StarportList[i].mQueueCount = gAnyBotStructures_StarportList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_StarportCount -= 1;
+        } else if (unitType == "SupplyDepot" || unitType == "SupplyDepotLowered") {
+            for (; i < gAnyBotStructures_SupplyDepotCount; i += 1) {
+                if (gAnyBotStructures_SupplyDepotList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_SupplyDepotCount-1; i += 1) {
+                gAnyBotStructures_SupplyDepotList[i].mUnit = gAnyBotStructures_SupplyDepotList[i+1].mUnit;
+                gAnyBotStructures_SupplyDepotList[i].mRecentBase = gAnyBotStructures_SupplyDepotList[i+1].mRecentBase;
+                gAnyBotStructures_SupplyDepotList[i].mQueueCount = gAnyBotStructures_SupplyDepotList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_SupplyDepotCount -= 1;
+        } else if (unitType == "Reactor" || unitType == "BarracksReactor" || unitType == "FactoryReactor" || unitType == "StarportReactor") {
+            if (unitType == "BarracksReactor") {
+                gAnyBotStructures_BarracksReactors -= 1;
+            } else if (unitType == "FactoryReactor") {
+                gAnyBotStructures_FactoryReactors -= 1;
+            } else if (unitType == "StarportReactor") {
+                gAnyBotStructures_StarportReactors -= 1;
+            }
+            for (; i < gAnyBotStructures_ReactorCount; i += 1) {
+                if (gAnyBotStructures_ReactorList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_ReactorCount-1; i += 1) {
+                gAnyBotStructures_ReactorList[i].mUnit = gAnyBotStructures_ReactorList[i+1].mUnit;
+                gAnyBotStructures_ReactorList[i].mRecentBase = gAnyBotStructures_ReactorList[i+1].mRecentBase;
+                gAnyBotStructures_ReactorList[i].mQueueCount = gAnyBotStructures_ReactorList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_ReactorCount -= 1;
+        } else if (unitType == "TechLab" || unitType == "BarracksTechLab" || unitType == "FactoryTechLab" || unitType == "StarportTechLab") {
+            if (unitType == "BarracksTechLab") {
+                gAnyBotStructures_BarracksTechLabs -= 1;
+            } else if (unitType == "FactoryTechLab") {
+                gAnyBotStructures_FactoryTechLabs -= 1;
+            } else if (unitType == "StarportTechLab") {
+                gAnyBotStructures_StarportTechLabs -= 1;
+            }
+            for (; i < gAnyBotStructures_TechLabCount; i += 1) {
+                if (gAnyBotStructures_TechLabList[i].mUnit == EventUnit()) {
+                    break;
+                }
+            }
+            for (; i < gAnyBotStructures_TechLabCount-1; i += 1) {
+                gAnyBotStructures_TechLabList[i].mUnit = gAnyBotStructures_TechLabList[i+1].mUnit;
+                gAnyBotStructures_TechLabList[i].mRecentBase = gAnyBotStructures_TechLabList[i+1].mRecentBase;
+                gAnyBotStructures_TechLabList[i].mQueueCount = gAnyBotStructures_TechLabList[i+1].mQueueCount;
+            }
+            gAnyBotStructures_TechLabCount -= 1;
+        }
+    } else if (UtilsIsUnitEnemyStructure(EventUnit())) {
+        for (; i < gEnemyStructures_UnitCount; i += 1) {
+            if (gEnemyStructures_UnitList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gEnemyStructures_UnitCount - 1; i += 1) {
+            gEnemyStructures_UnitList[i].mUnit = gEnemyStructures_UnitList[i+1].mUnit;
+            gEnemyStructures_UnitList[i].mRecentBase = gEnemyStructures_UnitList[i+1].mRecentBase;
+        }
+        gEnemyStructures_UnitCount -= 1;
+    }
+
+    return true;
+}
+
+void StructuresRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("StructuresUnitCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+
+    t = TriggerCreate("StructuresUnitFinishedConstructing");
+    TriggerAddEventUnitConstructProgress(t, null, c_unitProgressStageComplete);
+}

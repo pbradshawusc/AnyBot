@@ -1,0 +1,21 @@
+void StimpackRegisterTriggers() {
+	trigger t = TriggerCreate("StimpackActivate");
+	TriggerAddEventUnitAcquiredTarget (t, null);
+}
+
+bool StimpackActivate(bool testConditions, bool runActions) {
+
+
+	string currentUnit = UnitGetType(EventUnit());
+	order stim = Order(AbilityCommand("Stimpack",0));
+	bool temp = !SkillCheckCheck();
+
+	if(currentUnit == "Marine" && UnitGetCooldown(EventUnit(), "Stimpack") < 1 && temp) {
+		UnitIssueOrder((EventUnit()), stim, c_orderQueueAddToFront);
+		UnitAddCooldown (EventUnit(), "Stimpack", 10);
+	} else if (currentUnit == "Marine" && UnitGetCooldown(EventUnit(), "Stimpack") < 1 && !temp) {
+		DebugLog("Skill Check Failed - Not activating stimpack", "SkillCheck");
+	}
+
+	return true;
+}

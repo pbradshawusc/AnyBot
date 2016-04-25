@@ -1,0 +1,46 @@
+unitgroup travelGroup;
+
+unit TravelSlowestUnit(unitgroup g, point p) {
+    int minspeed=1000000;
+    unit slowest;
+    int speed;
+    int i;
+    fixed leaderDistance = 10000;
+    i = 0;
+    slowest = UnitGroupUnit(g, 1);
+    for (; i < UnitGroupCount(g, c_unitCountAlive); i += 1) {
+        speed=UnitGetPropertyInt(UnitGroupUnit(g, i+1), c_unitPropMovementSpeed, true);
+        if (DistanceBetweenPoints(UnitGetPosition(UnitGroupUnit(g, i + 1)), p) - 5 > leaderDistance) {
+            continue;
+        }
+        if(speed<minspeed){
+            minspeed=speed;
+            slowest=UnitGroupUnit(g, i + 1);
+            leaderDistance = DistanceBetweenPoints(UnitGetPosition(slowest), p);
+        }
+    }
+    return slowest;
+}
+
+bool TravelAttackLeaderTarget(bool checkConds, bool runActions) {
+    unit target = OrderGetTargetUnit(UnitOrder(EventUnit(), 1));
+    if (target != null && UnitGetOwner(target) != gGeneral_AnyBotTeamNumber) {
+        UnitGroupIssueOrder(travelGroup, OrderTargetingUnit(AbilityCommand("attack", 0), target), c_orderQueueAddToFront);
+    }
+	return true;
+}
+
+void TravelEmbark(unitgroup ug, point p) {
+    unit leader;
+    trigger t;
+
+    travelGroup = ug;
+    leader = TravelSlowestUnit(ug, p);
+    DebugLog("Leader is: " + UnitGetType(leader), "Travel");
+    UnitGroupRemove(travelGroup, leader);
+    UnitIssueOrder(leader, OrderTargetingPoint(AbilityCommand("attack", 0), p), c_orderQueueReplace);
+    UnitGroupIssueOrder(travelGroup, OrderTargetingUnit(AbilityCommand("move", 0), leader), c_orderQueueReplace);
+
+    t = TriggerCreate("TravelAttackLeaderTarget");
+    TriggerAddEventUnitAcquiredTarget(t, UnitRefFromUnit(leader));
+}

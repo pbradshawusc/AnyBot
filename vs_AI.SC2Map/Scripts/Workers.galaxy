@@ -1,0 +1,242 @@
+void WorkersSetBase(unit u, int baseNum) {
+    int i = 0;
+    for (; i < gAnyBotWorkers_SCVCount; i += 1) {
+        if (gAnyBotWorkers_SCVList[i].mUnit == u) {
+            gAnyBotWorkers_SCVList[i].mRecentBase = baseNum;
+            return;
+        }
+    }
+
+    i = 0;
+    for (; i < gAnyBotWorkers_MULECount; i += 1) {
+        if (gAnyBotWorkers_MULEList[i].mUnit == u) {
+            gAnyBotWorkers_MULEList[i].mRecentBase = baseNum;
+            return;
+        }
+    }
+}
+
+bool WorkersEnterBaseOne(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnit()) != "SCV") {
+        return true;
+    }
+    gAnyBotBases_SCVMinersAtBase[0] += 1;
+
+    WorkersSetBase(EventUnit(), 1);
+
+    return true;
+}
+
+bool WorkersExitBaseOne(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnit()) != "SCV") {
+        return true;
+    }
+    gAnyBotBases_SCVMinersAtBase[0] -= 1;
+
+    WorkersSetBase(EventUnit(), -1);
+
+    return true;
+}
+
+bool WorkersEnterBaseTwo(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnit()) != "SCV") {
+        return true;
+    }
+    gAnyBotBases_SCVMinersAtBase[1] += 1;
+
+    WorkersSetBase(EventUnit(), 2);
+
+    return true;
+}
+
+bool WorkersExitBaseTwo(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnit()) != "SCV") {
+        return true;
+    }
+    gAnyBotBases_SCVMinersAtBase[1] -= 1;
+
+    WorkersSetBase(EventUnit(), -1);
+
+    return true;
+}
+
+bool WorkersEnterBaseThree(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnit()) != "SCV") {
+        return true;
+    }
+    gAnyBotBases_SCVMinersAtBase[2] += 1;
+
+    WorkersSetBase(EventUnit(), 3);
+
+    return true;
+}
+
+bool WorkersExitBaseThree(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnit()) != "SCV") {
+        return true;
+    }
+    gAnyBotBases_SCVMinersAtBase[2] -= 1;
+
+    WorkersSetBase(EventUnit(), -1);
+
+    return true;
+}
+
+bool WorkersEnterBaseFour(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnit()) != "SCV") {
+        return true;
+    }
+    gAnyBotBases_SCVMinersAtBase[3] += 1;
+
+    WorkersSetBase(EventUnit(), 4);
+
+    return true;
+}
+
+bool WorkersExitBaseFour(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnit()) == "SCV") {
+        return true;
+    }
+    gAnyBotBases_SCVMinersAtBase[3] -= 1;
+
+    WorkersSetBase(EventUnit(), -1);
+
+    return true;
+}
+
+// Note that if no worker is available, then a command center is returned
+unit WorkersAvailableUnit(int baseNum) {
+    int i = 0;
+    unit foundUnit;
+    bool didFindUnit = false;
+    unitgroup ug;
+
+    for (; i < gAnyBotWorkers_SCVCount; i += 1) {
+        if (!didFindUnit && gAnyBotWorkers_SCVList[i].mRecentBase == baseNum && UnitOrderCount(gAnyBotWorkers_SCVList[i].mUnit) > 0 &&  AbilityCommandGetAbility(OrderGetAbilityCommand(UnitOrder(gAnyBotWorkers_SCVList[i].mUnit, 0))) == "SCVHarvest" &&  UnitGetType(OrderGetTargetUnit(UnitOrder(gAnyBotWorkers_SCVList[i].mUnit, 0))) != "Refinery") {
+            // We have found an SCV at our base
+            // This SCV is harvesting either vespene or minerals in its primary queue slot
+            // We know that it is harvesting minerals because the unit being targeted is not a Refinery
+            foundUnit = gAnyBotWorkers_SCVList[i].mUnit;
+            didFindUnit = true;
+        } else if (gAnyBotWorkers_SCVList[i].mRecentBase == baseNum && UnitOrderCount(gAnyBotWorkers_SCVList[i].mUnit) == 0) {
+            // We have found an SCV at our base
+            // This SCV has no orders in its queue
+            foundUnit = gAnyBotWorkers_SCVList[i].mUnit;
+            didFindUnit = true;
+            ug = UnitGroup("MineralField", c_playerAny, RegionEntireMap(), null, 0);
+            UnitGroupAddUnitGroup(ug, UnitGroup("MineralField750", c_playerAny, RegionEntireMap(), null, 0));
+            UnitGroupAddUnitGroup(ug, UnitGroup("RichMineralField", c_playerAny, RegionEntireMap(), null, 0));
+            UnitGroupAddUnitGroup(ug, UnitGroup("RichMineralField750", c_playerAny, RegionEntireMap(), null, 0));
+            UnitIssueOrder(foundUnit, OrderTargetingUnit(AbilityCommand("SCVHarvest", 0), UnitGroupClosestToPoint(ug, PointFromName("AnyBotBase" + IntToString(gAnyBotWorkers_SCVList[i].mRecentBase)))), c_orderQueueReplace);
+            break;
+        }
+    }
+
+    if (!didFindUnit) {
+        foundUnit = gAnyBotStructures_CommandCenterList[0].mUnit;
+    }
+
+    return foundUnit;
+}
+
+bool WorkersCreated(bool checkConds, bool runActions) {
+    unitgroup ug;
+    int baseNum;
+    unit worker;
+    int i;
+    if (UnitGetType(EventUnitCreatedUnit()) == "SCV" || UnitGetType(EventUnitCreatedUnit()) == "MULE") {
+        ug = UnitGroup("MineralField", c_playerAny, RegionEntireMap(), null, 0);
+        UnitGroupAddUnitGroup(ug, UnitGroup("MineralField750", c_playerAny, RegionEntireMap(), null, 0));
+        UnitGroupAddUnitGroup(ug, UnitGroup("RichMineralField", c_playerAny, RegionEntireMap(), null, 0));
+        UnitGroupAddUnitGroup(ug, UnitGroup("RichMineralField750", c_playerAny, RegionEntireMap(), null, 0));
+        UnitIssueOrder(EventUnitCreatedUnit(), OrderTargetingUnit(AbilityCommand("SCVHarvest", 0), UnitGroupClosestToPoint(ug, UnitGetPosition(EventUnitCreatedUnit()))), c_orderQueueReplace);
+    } else if (UnitGetType(EventUnitCreatedUnit()) == "Refinery") {
+        baseNum = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+        i = 0;
+        for (; i < 3; i += 1) {
+            worker = WorkersAvailableUnit(baseNum);
+            UnitIssueOrder(worker, OrderTargetingUnit(AbilityCommand("SCVHarvest", 0), EventUnitCreatedUnit()), c_orderQueueReplace);
+        }
+    }
+
+    return true;
+}
+
+bool WorkersBuildItem(string item, int baseNum) {
+    unit workerToBuild = WorkersAvailableUnit(baseNum);
+    unit geyser;
+    unitgroup geyserGroup;
+    int i = 0;
+    unitgroup temp;
+
+    if (UnitGetType(workerToBuild) != "CommandCenter") {
+        if (item == "SupplyDepot") {
+            gAnyBotBases_BuildingSupplyDepot = true;
+            UnitIssueOrder(workerToBuild, OrderTargetingPoint(AbilityCommand("TerranBuild", 1), UnitTypePlacementFromPoint("SupplyDepot", gGeneral_AnyBotTeamNumber, PointFromName("AnyBotSupplyDepots" + IntToString(baseNum)), 20)), c_orderQueueAddToFront);
+        } else if (item == "Barracks") {
+            UnitIssueOrder(workerToBuild, OrderTargetingPoint(AbilityCommand("TerranBuild", 3), UnitTypePlacementFromPoint("Barracks", 2, PointFromName("AnyBotBarracks" + IntToString(baseNum)), 20)), c_orderQueueAddToFront);
+        } else if (item == "CommandCenter") {
+            gAnyBotBases_BuildingExpansion = true;
+            UnitIssueOrder(workerToBuild, OrderTargetingPoint(AbilityCommand("TerranBuild", 0), UnitTypePlacementFromPoint("CommandCenter", 2, PointFromName("AnyBotCommandCenter"), 20)), c_orderQueueAddToFront);
+        } else if (item == "Refinery") {
+            geyserGroup = UnitGroupEmpty();
+            i = 0;
+            for (; i < gGeneral_MaxBases; i += 1) {
+                if (gAnyBotBases_ExpansionAtBase[i]) {
+                    UnitGroupAddUnitGroup(geyserGroup, UnitGroup("ShakurasVespeneGeyser", c_playerAny, RegionFromName("AnyBotBase" + IntToString(i+1)), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0));
+                }
+            }
+            for (; i < UnitGroupCount(geyserGroup, c_unitCountAll); i += 1) {
+                temp = UnitGroup("Refinery", c_playerAny, RegionCircle(UnitGetPosition(UnitGroupUnit(geyserGroup, i + 1)), 2), gGeneral_DefaultFilter, 0);
+                if (UnitGroupCount(temp, c_unitCountAll)>0) {
+                    UnitGroupRemove(geyserGroup, UnitGroupUnit(geyserGroup, i+1));
+                    i -= 1;
+                }
+            }
+            if (UnitGroupCount(geyserGroup, c_unitCountAll) == 0) {
+                DebugLog("No Geysers to build on", "Error");
+                return false;
+            }
+            geyser = UnitGroupClosestToPoint(geyserGroup, UnitGetPosition(workerToBuild));
+            UnitIssueOrder(workerToBuild, OrderTargetingUnit(AbilityCommand("TerranBuild", 2), geyser), c_orderQueueAddToFront);
+        } else if (item == "Factory") {
+            UnitIssueOrder(workerToBuild, OrderTargetingPoint(AbilityCommand("TerranBuild", 10), UnitTypePlacementFromPoint("Factory", 2, PointFromName("AnyBotBarracks" + IntToString(baseNum)), 20)), c_orderQueueAddToFront);
+        } else if (item == "Starport") {
+            UnitIssueOrder(workerToBuild, OrderTargetingPoint(AbilityCommand("TerranBuild", 11), UnitTypePlacementFromPoint("Starport", 2, PointFromName("AnyBotBarracks" + IntToString(baseNum)), 20)), c_orderQueueAddToFront);
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void WorkersRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("WorkersEnterBaseOne");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase1"), true);
+
+    t = TriggerCreate("WorkersExitBaseOne");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase1"), false);
+
+    t = TriggerCreate("WorkersEnterBaseTwo");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase2"), true);
+
+    t = TriggerCreate("WorkersExitBaseTwo");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase2"), false);
+
+    t = TriggerCreate("WorkersEnterBaseThree");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase3"), true);
+
+    t = TriggerCreate("WorkersExitBaseThree");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase3"), false);
+
+    t = TriggerCreate("WorkersEnterBaseFour");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase4"), true);
+
+    t = TriggerCreate("WorkersExitBaseFour");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase4"), false);
+
+    t = TriggerCreate("WorkersCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+}

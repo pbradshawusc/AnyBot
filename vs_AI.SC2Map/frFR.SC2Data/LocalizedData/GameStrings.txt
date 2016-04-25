@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=Sur cette carte, tirez avantage des extensions facilement accessibles pour constituer plus aisément une grande armée. /// Take advantage of the fact that expansions are easily accessible on this map to more easily build up a large army.
+DocInfo/DescShort=1c1
+DocInfo/Name=Tours du crépuscule /// Dusk Towers
+MapInfo/Player00/Name=Neutre
+MapInfo/Player01/Name=Joueur 1
+MapInfo/Player02/Name=Joueur 2
+MapInfo/Player03/Name=Hostile
+MapInfo/Player04/Name=Joueur 4
+MapInfo/Player05/Name=Hostile

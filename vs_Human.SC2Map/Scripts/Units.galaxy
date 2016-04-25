@@ -1,0 +1,582 @@
+void UnitsInternalEnterBase(unit u, int baseNum) {
+    string unitType = UnitGetType(u);
+    int i = 0;
+
+    if (unitType == "MULE") {
+        for(; i < gAnyBotWorkers_MULECount; i += 1) {
+            if (gAnyBotWorkers_MULEList[i].mUnit == u) {
+                gAnyBotWorkers_MULEList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Banshee") {
+        for(; i < gAnyBotArmy_BansheeCount; i += 1) {
+            if (gAnyBotArmy_BansheeList[i].mUnit == u) {
+                gAnyBotArmy_BansheeList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Battlecruiser") {
+        for(; i < gAnyBotArmy_BattlecruiserCount; i += 1) {
+            if (gAnyBotArmy_BattlecruiserList[i].mUnit == u) {
+                gAnyBotArmy_BattlecruiserList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Cyclone") {
+        for(; i < gAnyBotArmy_CycloneCount; i += 1) {
+            if (gAnyBotArmy_CycloneList[i].mUnit == u) {
+                gAnyBotArmy_CycloneList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Ghost") {
+        for(; i < gAnyBotArmy_GhostCount; i += 1) {
+            if (gAnyBotArmy_GhostList[i].mUnit == u) {
+                gAnyBotArmy_GhostList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Hellbat(BattleMode)") {
+        for(; i < gAnyBotArmy_HellbatBattleModeCount; i += 1) {
+            if (gAnyBotArmy_HellbatBattleModeList[i].mUnit == u) {
+                gAnyBotArmy_HellbatBattleModeList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Hellion") {
+        for(; i < gAnyBotArmy_HellionCount; i += 1) {
+            if (gAnyBotArmy_HellionList[i].mUnit == u) {
+                gAnyBotArmy_HellionList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "HERC") {
+        for(; i < gAnyBotArmy_HERCCount; i += 1) {
+            if (gAnyBotArmy_HERCList[i].mUnit == u) {
+                gAnyBotArmy_HERCList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Liberator(AA)" || unitType == "Liberator(AG)") {
+        for(; i < gAnyBotArmy_LiberatorCount; i += 1) {
+            if (gAnyBotArmy_LiberatorList[i].mUnit == u) {
+                gAnyBotArmy_LiberatorList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Marauder") {
+        for(; i < gAnyBotArmy_MarauderCount; i += 1) {
+            if (gAnyBotArmy_MarauderList[i].mUnit == u) {
+                gAnyBotArmy_MarauderList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Marine") {
+        for(; i < gAnyBotArmy_MarineCount; i += 1) {
+            if (gAnyBotArmy_MarineList[i].mUnit == u) {
+                gAnyBotArmy_MarineList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Medivac") {
+        for(; i < gAnyBotArmy_MedivacCount; i += 1) {
+            if (gAnyBotArmy_MedivacList[i].mUnit == u) {
+                gAnyBotArmy_MedivacList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "PointDefenseDrone") {
+        for(; i < gAnyBotArmy_PointDefenseDroneCount; i += 1) {
+            if (gAnyBotArmy_PointDefenseDroneList[i].mUnit == u) {
+                gAnyBotArmy_PointDefenseDroneList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Raven") {
+        for(; i < gAnyBotArmy_RavenCount; i += 1) {
+            if (gAnyBotArmy_RavenList[i].mUnit == u) {
+                gAnyBotArmy_RavenList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    }  else if (unitType == "Reaper") {
+        for(; i < gAnyBotArmy_ReaperCount; i += 1) {
+            if (gAnyBotArmy_ReaperList[i].mUnit == u) {
+                gAnyBotArmy_ReaperList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "SiegeTank" || unitType == "SiegeTankSieged") {
+        for(; i < gAnyBotArmy_SiegeTankCount; i += 1) {
+            if (gAnyBotArmy_SiegeTankList[i].mUnit == u) {
+                gAnyBotArmy_SiegeTankList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    } else if (unitType == "Thor" || unitType == "Thor-ExplosivePaylodeMode") {
+        for(; i < gAnyBotArmy_ThorCount; i += 1) {
+            if (gAnyBotArmy_ThorList[i].mUnit == u) {
+                gAnyBotArmy_ThorList[i].mRecentBase = baseNum;
+                break;
+            }
+        }
+    }
+}
+
+void UnitsInternalAddUnit(unit u) {
+    string unitType = UnitGetType(u);
+
+    if (unitType == "SCV") {
+        gAnyBotWorkers_SCVList[gAnyBotWorkers_SCVCount].mUnit = u;
+        gAnyBotWorkers_SCVList[gAnyBotWorkers_SCVCount].mRecentBase = -1;
+        gAnyBotWorkers_SCVList[gAnyBotWorkers_SCVCount].mQueueCount = 0;
+        gAnyBotWorkers_SCVCount += 1;
+    } else if (unitType == "MULE") {
+        gAnyBotWorkers_MULEList[gAnyBotWorkers_MULECount].mUnit = u;
+        gAnyBotWorkers_MULEList[gAnyBotWorkers_MULECount].mRecentBase = -1;
+        gAnyBotWorkers_MULEList[gAnyBotWorkers_MULECount].mQueueCount = 0;
+        gAnyBotWorkers_MULECount += 1;
+    } else if (unitType == "Banshee") {
+        gAnyBotArmy_BansheeList[gAnyBotArmy_BansheeCount].mUnit = u;
+        gAnyBotArmy_BansheeList[gAnyBotArmy_BansheeCount].mRecentBase = -1;
+        gAnyBotArmy_BansheeList[gAnyBotArmy_BansheeCount].mQueueCount = 0;
+        gAnyBotArmy_BansheeCount += 1;
+    } else if (unitType == "Battlecruiser") {
+        gAnyBotArmy_BattlecruiserList[gAnyBotArmy_BattlecruiserCount].mUnit = u;
+        gAnyBotArmy_BattlecruiserList[gAnyBotArmy_BattlecruiserCount].mRecentBase = -1;
+        gAnyBotArmy_BattlecruiserList[gAnyBotArmy_BattlecruiserCount].mQueueCount = 0;
+        gAnyBotArmy_BattlecruiserCount += 1;
+    } else if (unitType == "Cyclone") {
+        gAnyBotArmy_CycloneList[gAnyBotArmy_CycloneCount].mUnit = u;
+        gAnyBotArmy_CycloneList[gAnyBotArmy_CycloneCount].mRecentBase = -1;
+        gAnyBotArmy_CycloneList[gAnyBotArmy_CycloneCount].mQueueCount = 0;
+        gAnyBotArmy_CycloneCount += 1;
+    } else if (unitType == "Ghost") {
+        gAnyBotArmy_GhostList[gAnyBotArmy_GhostCount].mUnit = u;
+        gAnyBotArmy_GhostList[gAnyBotArmy_GhostCount].mRecentBase = -1;
+        gAnyBotArmy_GhostList[gAnyBotArmy_GhostCount].mQueueCount = 0;
+        gAnyBotArmy_GhostCount += 1;
+    } else if (unitType == "Hellbat(BattleMode)") {
+        gAnyBotArmy_HellbatBattleModeList[gAnyBotArmy_HellbatBattleModeCount].mUnit = u;
+        gAnyBotArmy_HellbatBattleModeList[gAnyBotArmy_HellbatBattleModeCount].mRecentBase = -1;
+        gAnyBotArmy_HellbatBattleModeList[gAnyBotArmy_HellbatBattleModeCount].mQueueCount = 0;
+        gAnyBotArmy_HellbatBattleModeCount += 1;
+    } else if (unitType == "Hellion") {
+        gAnyBotArmy_HellionList[gAnyBotArmy_HellionCount].mUnit = u;
+        gAnyBotArmy_HellionList[gAnyBotArmy_HellionCount].mRecentBase = -1;
+        gAnyBotArmy_HellionList[gAnyBotArmy_HellionCount].mQueueCount = 0;
+        gAnyBotArmy_HellionCount += 1;
+    } else if (unitType == "HERC") {
+        gAnyBotArmy_HERCList[gAnyBotArmy_HERCCount].mUnit = u;
+        gAnyBotArmy_HERCList[gAnyBotArmy_HERCCount].mRecentBase = -1;
+        gAnyBotArmy_HERCList[gAnyBotArmy_HERCCount].mQueueCount = 0;
+        gAnyBotArmy_HERCCount += 1;
+    } else if (unitType == "Liberator(AA)" || unitType == "Liberator(AG)") {
+        gAnyBotArmy_LiberatorList[gAnyBotArmy_LiberatorCount].mUnit = u;
+        gAnyBotArmy_LiberatorList[gAnyBotArmy_LiberatorCount].mRecentBase = -1;
+        gAnyBotArmy_LiberatorList[gAnyBotArmy_LiberatorCount].mQueueCount = 0;
+        gAnyBotArmy_LiberatorCount += 1;
+    } else if (unitType == "Marauder") {
+        gAnyBotArmy_MarauderList[gAnyBotArmy_MarauderCount].mUnit = u;
+        gAnyBotArmy_MarauderList[gAnyBotArmy_MarauderCount].mRecentBase = -1;
+        gAnyBotArmy_MarauderList[gAnyBotArmy_MarauderCount].mQueueCount = 0;
+        gAnyBotArmy_MarauderCount += 1;
+    } else if (unitType == "Marine") {
+        gAnyBotArmy_MarineList[gAnyBotArmy_MarineCount].mUnit = u;
+        gAnyBotArmy_MarineList[gAnyBotArmy_MarineCount].mRecentBase = -1;
+        gAnyBotArmy_MarineList[gAnyBotArmy_MarineCount].mQueueCount = 0;
+        gAnyBotArmy_MarineCount += 1;
+    } else if (unitType == "Medivac") {
+        gAnyBotArmy_MedivacList[gAnyBotArmy_MedivacCount].mUnit = u;
+        gAnyBotArmy_MedivacList[gAnyBotArmy_MedivacCount].mRecentBase = -1;
+        gAnyBotArmy_MedivacList[gAnyBotArmy_MedivacCount].mQueueCount = 0;
+        gAnyBotArmy_MedivacCount += 1;
+    } else if (unitType == "PointDefenseDrone") {
+        gAnyBotArmy_PointDefenseDroneList[gAnyBotArmy_PointDefenseDroneCount].mUnit = u;
+        gAnyBotArmy_PointDefenseDroneList[gAnyBotArmy_PointDefenseDroneCount].mRecentBase = -1;
+        gAnyBotArmy_PointDefenseDroneList[gAnyBotArmy_PointDefenseDroneCount].mQueueCount = 0;
+        gAnyBotArmy_PointDefenseDroneCount += 1;
+    } else if (unitType == "Raven") {
+        gAnyBotArmy_RavenList[gAnyBotArmy_RavenCount].mUnit = u;
+        gAnyBotArmy_RavenList[gAnyBotArmy_RavenCount].mRecentBase = -1;
+        gAnyBotArmy_RavenList[gAnyBotArmy_RavenCount].mQueueCount = 0;
+        gAnyBotArmy_RavenCount += 1;
+    }  else if (unitType == "Reaper") {
+        gAnyBotArmy_ReaperList[gAnyBotArmy_ReaperCount].mUnit = u;
+        gAnyBotArmy_ReaperList[gAnyBotArmy_ReaperCount].mRecentBase = -1;
+        gAnyBotArmy_ReaperList[gAnyBotArmy_ReaperCount].mQueueCount = 0;
+        gAnyBotArmy_ReaperCount += 1;
+    } else if (unitType == "SiegeTank" || unitType == "SiegeTankSieged") {
+        gAnyBotArmy_SiegeTankList[gAnyBotArmy_SiegeTankCount].mUnit = u;
+        gAnyBotArmy_SiegeTankList[gAnyBotArmy_SiegeTankCount].mRecentBase = -1;
+        gAnyBotArmy_SiegeTankList[gAnyBotArmy_SiegeTankCount].mQueueCount = 0;
+        gAnyBotArmy_SiegeTankCount += 1;
+    } else if (unitType == "Thor" || unitType == "Thor-ExplosivePaylodeMode") {
+        gAnyBotArmy_ThorList[gAnyBotArmy_ThorCount].mUnit = u;
+        gAnyBotArmy_ThorList[gAnyBotArmy_ThorCount].mRecentBase = -1;
+        gAnyBotArmy_ThorList[gAnyBotArmy_ThorCount].mQueueCount = 0;
+        gAnyBotArmy_ThorCount += 1;
+    }
+}
+
+void UnitsInternalRemoveUnit(unit u) {
+    string unitType = UnitGetType(u);
+    int i = 0;
+
+    if (unitType == "SCV") {
+        for (; i < gAnyBotWorkers_SCVCount; i += 1) {
+            if (gAnyBotWorkers_SCVList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotWorkers_SCVCount; i += 1) {
+            gAnyBotWorkers_SCVList[i].mUnit = gAnyBotWorkers_SCVList[i+1].mUnit;
+            gAnyBotWorkers_SCVList[i].mRecentBase = gAnyBotWorkers_SCVList[i+1].mRecentBase;
+            gAnyBotWorkers_SCVList[i].mQueueCount = gAnyBotWorkers_SCVList[i+1].mQueueCount;
+        }
+        gAnyBotWorkers_SCVCount -= 1;
+    } else if (unitType == "MULE") {
+        for (; i < gAnyBotWorkers_MULECount; i += 1) {
+            if (gAnyBotWorkers_MULEList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotWorkers_MULECount; i += 1) {
+            gAnyBotWorkers_MULEList[i].mUnit = gAnyBotWorkers_MULEList[i+1].mUnit;
+            gAnyBotWorkers_MULEList[i].mRecentBase = gAnyBotWorkers_MULEList[i+1].mRecentBase;
+            gAnyBotWorkers_MULEList[i].mQueueCount = gAnyBotWorkers_MULEList[i+1].mQueueCount;
+        }
+        gAnyBotWorkers_MULECount -= 1;
+    } else if (unitType == "Banshee") {
+        for (; i < gAnyBotArmy_BansheeCount; i += 1) {
+            if (gAnyBotArmy_BansheeList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_BansheeCount; i += 1) {
+            gAnyBotArmy_BansheeList[i].mUnit = gAnyBotArmy_BansheeList[i+1].mUnit;
+            gAnyBotArmy_BansheeList[i].mRecentBase = gAnyBotArmy_BansheeList[i+1].mRecentBase;
+            gAnyBotArmy_BansheeList[i].mQueueCount = gAnyBotArmy_BansheeList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_BansheeCount -= 1;
+    } else if (unitType == "Battlecruiser") {
+        for (; i < gAnyBotArmy_BattlecruiserCount; i += 1) {
+            if (gAnyBotArmy_BattlecruiserList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_BattlecruiserCount; i += 1) {
+            gAnyBotArmy_BattlecruiserList[i].mUnit = gAnyBotArmy_BattlecruiserList[i+1].mUnit;
+            gAnyBotArmy_BattlecruiserList[i].mRecentBase = gAnyBotArmy_BattlecruiserList[i+1].mRecentBase;
+            gAnyBotArmy_BattlecruiserList[i].mQueueCount = gAnyBotArmy_BattlecruiserList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_BattlecruiserCount -= 1;
+    } else if (unitType == "Cyclone") {
+        for (; i < gAnyBotArmy_CycloneCount; i += 1) {
+            if (gAnyBotArmy_CycloneList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_CycloneCount; i += 1) {
+            gAnyBotArmy_CycloneList[i].mUnit = gAnyBotArmy_CycloneList[i+1].mUnit;
+            gAnyBotArmy_CycloneList[i].mRecentBase = gAnyBotArmy_CycloneList[i+1].mRecentBase;
+            gAnyBotArmy_CycloneList[i].mQueueCount = gAnyBotArmy_CycloneList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_CycloneCount -= 1;
+    } else if (unitType == "Ghost") {
+        for (; i < gAnyBotArmy_GhostCount; i += 1) {
+            if (gAnyBotArmy_GhostList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_GhostCount; i += 1) {
+            gAnyBotArmy_GhostList[i].mUnit = gAnyBotArmy_GhostList[i+1].mUnit;
+            gAnyBotArmy_GhostList[i].mRecentBase = gAnyBotArmy_GhostList[i+1].mRecentBase;
+            gAnyBotArmy_GhostList[i].mQueueCount = gAnyBotArmy_GhostList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_GhostCount -= 1;
+    } else if (unitType == "Hellbat(BattleMode)") {
+        for (; i < gAnyBotArmy_HellbatBattleModeCount; i += 1) {
+            if (gAnyBotArmy_HellbatBattleModeList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_HellbatBattleModeCount; i += 1) {
+            gAnyBotArmy_HellbatBattleModeList[i].mUnit = gAnyBotArmy_HellbatBattleModeList[i+1].mUnit;
+            gAnyBotArmy_HellbatBattleModeList[i].mRecentBase = gAnyBotArmy_HellbatBattleModeList[i+1].mRecentBase;
+            gAnyBotArmy_HellbatBattleModeList[i].mQueueCount = gAnyBotArmy_HellbatBattleModeList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_HellbatBattleModeCount -= 1;
+    } else if (unitType == "Hellion") {
+        for (; i < gAnyBotArmy_HellionCount; i += 1) {
+            if (gAnyBotArmy_HellionList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_HellionCount; i += 1) {
+            gAnyBotArmy_HellionList[i].mUnit = gAnyBotArmy_HellionList[i+1].mUnit;
+            gAnyBotArmy_HellionList[i].mRecentBase = gAnyBotArmy_HellionList[i+1].mRecentBase;
+            gAnyBotArmy_HellionList[i].mQueueCount = gAnyBotArmy_HellionList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_HellionCount -= 1;
+    } else if (unitType == "HERC") {
+        for (; i < gAnyBotArmy_HERCCount; i += 1) {
+            if (gAnyBotArmy_HERCList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_HERCCount; i += 1) {
+            gAnyBotArmy_HERCList[i].mUnit = gAnyBotArmy_HERCList[i+1].mUnit;
+            gAnyBotArmy_HERCList[i].mRecentBase = gAnyBotArmy_HERCList[i+1].mRecentBase;
+            gAnyBotArmy_HERCList[i].mQueueCount = gAnyBotArmy_HERCList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_HERCCount -= 1;
+    } else if (unitType == "Liberator(AA)" || unitType == "Liberator(AG)") {
+        for (; i < gAnyBotArmy_LiberatorCount; i += 1) {
+            if (gAnyBotArmy_LiberatorList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_LiberatorCount; i += 1) {
+            gAnyBotArmy_LiberatorList[i].mUnit = gAnyBotArmy_LiberatorList[i+1].mUnit;
+            gAnyBotArmy_LiberatorList[i].mRecentBase = gAnyBotArmy_LiberatorList[i+1].mRecentBase;
+            gAnyBotArmy_LiberatorList[i].mQueueCount = gAnyBotArmy_LiberatorList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_LiberatorCount -= 1;
+    } else if (unitType == "Marauder") {
+        for (; i < gAnyBotArmy_MarauderCount; i += 1) {
+            if (gAnyBotArmy_MarauderList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_MarauderCount; i += 1) {
+            gAnyBotArmy_MarauderList[i].mUnit = gAnyBotArmy_MarauderList[i+1].mUnit;
+            gAnyBotArmy_MarauderList[i].mRecentBase = gAnyBotArmy_MarauderList[i+1].mRecentBase;
+            gAnyBotArmy_MarauderList[i].mQueueCount = gAnyBotArmy_MarauderList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_MarauderCount -= 1;
+    } else if (unitType == "Marine") {
+        for (; i < gAnyBotArmy_MarineCount; i += 1) {
+            if (gAnyBotArmy_MarineList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_MarineCount; i += 1) {
+            gAnyBotArmy_MarineList[i].mUnit = gAnyBotArmy_MarineList[i+1].mUnit;
+            gAnyBotArmy_MarineList[i].mRecentBase = gAnyBotArmy_MarineList[i+1].mRecentBase;
+            gAnyBotArmy_MarineList[i].mQueueCount = gAnyBotArmy_MarineList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_MarineCount -= 1;
+    } else if (unitType == "Medivac") {
+        for (; i < gAnyBotArmy_MedivacCount; i += 1) {
+            if (gAnyBotArmy_MedivacList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_MedivacCount; i += 1) {
+            gAnyBotArmy_MedivacList[i].mUnit = gAnyBotArmy_MedivacList[i+1].mUnit;
+            gAnyBotArmy_MedivacList[i].mRecentBase = gAnyBotArmy_MedivacList[i+1].mRecentBase;
+            gAnyBotArmy_MedivacList[i].mQueueCount = gAnyBotArmy_MedivacList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_MedivacCount -= 1;
+    } else if (unitType == "PointDefenseDrone") {
+        for (; i < gAnyBotArmy_PointDefenseDroneCount; i += 1) {
+            if (gAnyBotArmy_PointDefenseDroneList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_PointDefenseDroneCount; i += 1) {
+            gAnyBotArmy_PointDefenseDroneList[i].mUnit = gAnyBotArmy_PointDefenseDroneList[i+1].mUnit;
+            gAnyBotArmy_PointDefenseDroneList[i].mRecentBase = gAnyBotArmy_PointDefenseDroneList[i+1].mRecentBase;
+            gAnyBotArmy_PointDefenseDroneList[i].mQueueCount = gAnyBotArmy_PointDefenseDroneList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_PointDefenseDroneCount -= 1;
+    } else if (unitType == "Raven") {
+        for (; i < gAnyBotArmy_RavenCount; i += 1) {
+            if (gAnyBotArmy_RavenList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_RavenCount; i += 1) {
+            gAnyBotArmy_RavenList[i].mUnit = gAnyBotArmy_RavenList[i+1].mUnit;
+            gAnyBotArmy_RavenList[i].mRecentBase = gAnyBotArmy_RavenList[i+1].mRecentBase;
+            gAnyBotArmy_RavenList[i].mQueueCount = gAnyBotArmy_RavenList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_RavenCount -= 1;
+    }  else if (unitType == "Reaper") {
+        for (; i < gAnyBotArmy_ReaperCount; i += 1) {
+            if (gAnyBotArmy_ReaperList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_ReaperCount; i += 1) {
+            gAnyBotArmy_ReaperList[i].mUnit = gAnyBotArmy_ReaperList[i+1].mUnit;
+            gAnyBotArmy_ReaperList[i].mRecentBase = gAnyBotArmy_ReaperList[i+1].mRecentBase;
+            gAnyBotArmy_ReaperList[i].mQueueCount = gAnyBotArmy_ReaperList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_ReaperCount -= 1;
+    } else if (unitType == "SiegeTank" || unitType == "SiegeTankSieged") {
+        for (; i < gAnyBotArmy_SiegeTankCount; i += 1) {
+            if (gAnyBotArmy_SiegeTankList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_SiegeTankCount; i += 1) {
+            gAnyBotArmy_SiegeTankList[i].mUnit = gAnyBotArmy_SiegeTankList[i+1].mUnit;
+            gAnyBotArmy_SiegeTankList[i].mRecentBase = gAnyBotArmy_SiegeTankList[i+1].mRecentBase;
+            gAnyBotArmy_SiegeTankList[i].mQueueCount = gAnyBotArmy_SiegeTankList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_SiegeTankCount -= 1;
+    } else if (unitType == "Thor" || unitType == "Thor-ExplosivePaylodeMode") {
+        for (; i < gAnyBotArmy_ThorCount; i += 1) {
+            if (gAnyBotArmy_ThorList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_ThorCount; i += 1) {
+            gAnyBotArmy_ThorList[i].mUnit = gAnyBotArmy_ThorList[i+1].mUnit;
+            gAnyBotArmy_ThorList[i].mRecentBase = gAnyBotArmy_ThorList[i+1].mRecentBase;
+            gAnyBotArmy_ThorList[i].mQueueCount = gAnyBotArmy_ThorList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_ThorCount -= 1;
+    }
+}
+
+bool UnitsEnterBaseOne(bool checkConds, bool runActions) {
+    string unitType = UnitGetType(EventUnit());
+    if (UnitGetOwner(EventUnit()) != gGeneral_AnyBotTeamNumber) {
+        return true;
+    }
+
+    if (unitType == "SCV") {
+        // Handled in Workers.galaxy
+    } else {
+        UnitsInternalEnterBase(EventUnit(), 1);
+    }
+
+    return true;
+}
+
+bool UnitsEnterBaseTwo(bool checkConds, bool runActions) {
+    string unitType = UnitGetType(EventUnit());
+    if (UnitGetOwner(EventUnit()) != gGeneral_AnyBotTeamNumber) {
+        return true;
+    }
+
+    if (unitType == "SCV") {
+        // Handled in Workers.galaxy
+    } else {
+        UnitsInternalEnterBase(EventUnit(), 2);
+    }
+
+    return true;
+}
+
+bool UnitsEnterBaseThree(bool checkConds, bool runActions) {
+    string unitType = UnitGetType(EventUnit());
+    if (UnitGetOwner(EventUnit()) != gGeneral_AnyBotTeamNumber) {
+        return true;
+    }
+
+    if (unitType == "SCV") {
+        // Handled in Workers.galaxy
+    } else {
+        UnitsInternalEnterBase(EventUnit(), 3);
+    }
+
+    return true;
+}
+
+bool UnitsEnterBaseFour(bool checkConds, bool runActions) {
+    string unitType = UnitGetType(EventUnit());
+    if (UnitGetOwner(EventUnit()) != gGeneral_AnyBotTeamNumber) {
+        return true;
+    }
+
+    if (unitType == "SCV") {
+        // Handled in Workers.galaxy
+    } else {
+        UnitsInternalEnterBase(EventUnit(), 4);
+    }
+
+    return true;
+}
+
+bool UnitsUnitCreated(bool checkConds, bool runActions) {
+    fixed dps;
+    if (UtilsIsUnitMyUnit(EventUnitCreatedUnit())) {
+        UnitsInternalAddUnit(EventUnitCreatedUnit());
+    } else if (UtilsIsUnitEnemyUnit(EventUnitCreatedUnit())) {
+        if (UnitGetType(EventUnitCreatedUnit()) == "Drone") {
+            //gEnemyArmy_UnitList[gEnemyArmy_UnitCount].mUnit = EventUnitCreatedUnit();
+            //gEnemyArmy_UnitList[gEnemyArmy_UnitCount].mRecentBase = -1;
+            //gEnemyArmy_UnitCount += 1;
+            //gEnemyArmy_GlobalDPS += UtilsGetDPSForUnit(EventUnitCreatedUnit()) * gEnemyBases_DroneModifier;
+            //gEnemyArmy_GlobalEstimatedHealth += IntToFixed(UnitGetPropertyInt(EventUnitCreatedUnit(), c_unitPropLifeMax, true)) * gEnemyBases_DroneModifier;
+        } else {
+            gEnemyArmy_UnitList[gEnemyArmy_UnitCount].mUnit = EventUnitCreatedUnit();
+            gEnemyArmy_UnitList[gEnemyArmy_UnitCount].mRecentBase = -1;
+            gEnemyArmy_UnitCount += 1;
+            dps = UtilsGetDPSForUnit(EventUnitCreatedUnit());
+            if (dps != 0) {
+                gEnemyArmy_GlobalDPS += dps;
+                DebugLog("Total Enemy DPS: " + FixedToString(gEnemyArmy_GlobalDPS, 2), "DPS");
+                gEnemyArmy_GlobalEstimatedHealth += IntToFixed(UnitGetPropertyInt(EventUnitCreatedUnit(), c_unitPropLifeMax, true));
+            }
+        }
+    }
+
+    return true;
+}
+
+bool UnitsUnitDied(bool checkConds, bool runActions) {
+    int i = 0;
+    fixed dps;
+    if (UtilsIsUnitMyUnit(EventUnit())) {
+        UnitsInternalRemoveUnit(EventUnit());
+    } else if (UtilsIsUnitEnemyUnit(EventUnit())) {
+        for (; i < gEnemyArmy_UnitCount; i += 1) {
+            if (gEnemyArmy_UnitList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gEnemyArmy_UnitCount-1; i += 1) {
+            gEnemyArmy_UnitList[i].mUnit = gEnemyArmy_UnitList[i+1].mUnit;
+            gEnemyArmy_UnitList[i].mRecentBase = gEnemyArmy_UnitList[i+1].mRecentBase;
+        }
+        gEnemyArmy_UnitCount -= 1;
+        dps = UtilsGetDPSForUnit(EventUnit());
+        if (UnitGetType(EventUnit()) == "Drone") {
+            gEnemyArmy_GlobalDPS -= dps * gEnemyBases_DroneModifier;
+            gEnemyArmy_GlobalEstimatedHealth -= IntToFixed(UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true)) * gEnemyBases_DroneModifier;
+        } else if (dps != 0) {
+            gEnemyArmy_GlobalDPS -= dps;
+            gEnemyArmy_GlobalEstimatedHealth -= IntToFixed(UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true));
+        }
+    }
+
+    return true;
+}
+
+void UnitsRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("UnitsEnterBaseOne");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase1"), true);
+
+    t = TriggerCreate("UnitsEnterBaseTwo");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase2"), true);
+
+    t = TriggerCreate("UnitsEnterBaseThree");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase3"), true);
+
+    t = TriggerCreate("UnitsEnterBaseFour");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase4"), true);
+
+    t = TriggerCreate("UnitsUnitCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+
+    t = TriggerCreate("UnitsUnitDied");
+    TriggerAddEventUnitDied(t, null);
+}

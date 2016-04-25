@@ -1,0 +1,383 @@
+// Structs
+struct EnemyUnit {
+    unit mUnit;
+    int mRecentBase;
+};
+
+struct AllyUnit {
+    unit mUnit;
+    int mRecentBase;
+    int mQueueCount;
+};
+
+struct DamageUnit {
+    unit mUnit;
+    fixed mDamage;
+};
+
+struct AllyUnitGroup {
+    string groupName;
+    unitgroup group;
+    int expectedSize;
+};
+
+struct BuildOrderItem
+{
+    string unitName;
+    int supply;
+};
+
+// Debug
+bool gDebugLog_Enabled = true;
+bool gDebugLog_MineralsEnabled = false;
+bool gDebugLog_PurchasingEnabled = false;
+bool gDebugLog_DPSEnabled = false;
+bool gDebugLog_AttackEnabled = false;
+bool gDebugLog_TravelEnabled = false;
+bool gDebugLog_ReaperEnabled = false;
+bool gDebugLog_SkillCheckEnabled = false;
+bool gDebug_FogOfWarOn = true;
+bool gDebug_MaxGameSpeed = true;
+
+// Unit Types
+string[24] gUnitTypes_MyUnits;
+string[30] gUnitTypes_MyStructures;
+string[23] gUnitTypes_EnemyStructures;
+
+// General
+int gGeneral_AnyBotTeamNumber = 2;
+int gGeneral_MaxBases = 4;
+unitfilter gGeneral_DefaultFilter = UnitFilter((1 << c_targetFilterGround), 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)));
+
+// AnyBot Purchasing
+BuildOrderItem[100] gAnyBotPurchasing_BuildOrder;
+int gAnyBotPurchasing_BuildOrderCurrentIndex;
+int gAnyBotPurchasing_BuildOrderLength;
+bool gAnyBotPurchasing_BuildingAddOn = false;
+
+// AnyBot Bases
+int[4] gAnyBotBases_MineralsLeftAtBase;
+int[4] gAnyBotBases_SCVMinersAtBase;
+int[4] gAnyBotBases_SCVHarverstersAtBase;
+int[4] gAnyBotBases_RefineriesAtBase;
+bool[4] gAnyBotBases_ExpansionAtBase;
+bool[4] gAnyBotBases_UnderAttack;
+int[4] gAnyBotBases_ImportanceOfBase;
+bool gAnyBotBases_BuildingExpansion = false;
+bool gAnyBotBases_BuildingSupplyDepot = false;
+
+// AnyBot Workers
+//// Lists for all unit types
+AllyUnit[300] gAnyBotWorkers_MULEList;
+int gAnyBotWorkers_MULECount = 0;
+AllyUnit[300] gAnyBotWorkers_SCVList;
+int gAnyBotWorkers_SCVCount = 0;
+
+// AnyBot Structures
+//// Add On Tracking
+int gAnyBotStructures_BarracksTechLabs = 0;
+int gAnyBotStructures_FactoryTechLabs = 0;
+int gAnyBotStructures_StarportTechLabs = 0;
+int gAnyBotStructures_BarracksReactors = 0;
+int gAnyBotStructures_FactoryReactors = 0;
+int gAnyBotStructures_StarportReactors = 0;
+//// Lists for all unit types
+AllyUnit[300] gAnyBotStructures_ArmoryList;
+int gAnyBotStructures_ArmoryCount = 0;
+AllyUnit[300] gAnyBotStructures_AutoTurretList;
+int gAnyBotStructures_AutoTurretCount = 0;
+AllyUnit[300] gAnyBotStructures_BarracksList;
+int gAnyBotStructures_BarracksCount = 0;
+AllyUnit[300] gAnyBotStructures_EngineeringBayList;
+int gAnyBotStructures_EngineeringBayCount = 0;
+AllyUnit[300] gAnyBotStructures_BunkerList;
+int gAnyBotStructures_BunkerCount = 0;
+AllyUnit[300] gAnyBotStructures_CommandCenterList;
+int gAnyBotStructures_CommandCenterCount = 0;
+AllyUnit[300] gAnyBotStructures_FactoryList;
+int gAnyBotStructures_FactoryCount = 0;
+AllyUnit[300] gAnyBotStructures_FusionCoreList;
+int gAnyBotStructures_FusionCoreCount = 0;
+AllyUnit[300] gAnyBotStructures_GhostAcademyList;
+int gAnyBotStructures_GhostAcademyCount = 0;
+AllyUnit[300] gAnyBotStructures_MissileTurretList;
+int gAnyBotStructures_MissileTurretCount = 0;
+AllyUnit[300] gAnyBotStructures_RefineryList;
+int gAnyBotStructures_RefineryCount = 0;
+AllyUnit[300] gAnyBotStructures_StarportList;
+int gAnyBotStructures_StarportCount = 0;
+AllyUnit[300] gAnyBotStructures_SupplyDepotList;
+int gAnyBotStructures_SupplyDepotCount = 0;
+AllyUnit[300] gAnyBotStructures_ReactorList;
+int gAnyBotStructures_ReactorCount = 0;
+AllyUnit[300] gAnyBotStructures_TechLabList;
+int gAnyBotStructures_TechLabCount = 0;
+
+// AnyBot Army
+fixed gAnyBotArmy_GlobalDPS = 0;
+int gAnyBotArmy_CurrentAttackGroup = 1;
+//// Lists for attack groups
+AllyUnit[200] gAnyBotArmy_AttackGroupOneList;
+int gAnyBotArmy_AttackGroupOneCount = 0;
+fixed gAnyBotArmy_AttackGroupOneDPS = 0;
+fixed gAnyBotArmy_AttackGroupOneEstimatedHealth = 0;
+int gAnyBotArmy_AttackGroupOneTarget = -1;
+AllyUnit[200] gAnyBotArmy_AttackGroupTwoList;
+int gAnyBotArmy_AttackGroupTwoCount = 0;
+fixed gAnyBotArmy_AttackGroupTwoDPS = 0;
+fixed gAnyBotArmy_AttackGroupTwoEstimatedHealth = 0;
+int gAnyBotArmy_AttackGroupTwoTarget = -1;
+//// Lists for all unit types
+AllyUnit[300] gAnyBotArmy_BansheeList;
+int gAnyBotArmy_BansheeCount = 0;
+AllyUnit[300] gAnyBotArmy_BattlecruiserList;
+int gAnyBotArmy_BattlecruiserCount = 0;
+AllyUnit[300] gAnyBotArmy_CycloneList;
+int gAnyBotArmy_CycloneCount = 0;
+AllyUnit[300] gAnyBotArmy_GhostList;
+int gAnyBotArmy_GhostCount = 0;
+AllyUnit[300] gAnyBotArmy_HellbatBattleModeList;
+int gAnyBotArmy_HellbatBattleModeCount = 0;
+AllyUnit[300] gAnyBotArmy_HellionList;
+int gAnyBotArmy_HellionCount = 0;
+AllyUnit[300] gAnyBotArmy_HERCList;
+int gAnyBotArmy_HERCCount = 0;
+AllyUnit[300] gAnyBotArmy_LiberatorList;
+int gAnyBotArmy_LiberatorCount = 0;
+AllyUnit[300] gAnyBotArmy_MarauderList;
+int gAnyBotArmy_MarauderCount = 0;
+AllyUnit[300] gAnyBotArmy_MarineList;
+int gAnyBotArmy_MarineCount = 0;
+AllyUnit[300] gAnyBotArmy_MedivacList;
+int gAnyBotArmy_MedivacCount = 0;
+AllyUnit[300] gAnyBotArmy_PointDefenseDroneList;
+int gAnyBotArmy_PointDefenseDroneCount = 0;
+AllyUnit[300] gAnyBotArmy_RavenList;
+int gAnyBotArmy_RavenCount = 0;
+AllyUnit[300] gAnyBotArmy_ReaperList;
+AllyUnitGroup[20] gAnyBotArmy_ReaperGroupList;
+unitgroup gCurrentReaperPair;
+int gAnyBotArmy_ReaperCount = 0;
+int gAnyBotArmy_ReaperGroupCount = 0;
+int gAnyBotArmy_ReaperCurrentlyBeingCreated = 1;
+AllyUnit[300] gAnyBotArmy_SiegeTankList;
+int gAnyBotArmy_SiegeTankCount = 0;
+AllyUnit[300] gAnyBotArmy_ThorList;
+int gAnyBotArmy_ThorCount = 0;
+
+// AnyBot Research
+bool gAnyBotResearch_StartedStimPack = false;
+bool gAnyBotResearch_HaveStimPack = false;
+bool gAnyBotResearch_StartedCombatShield = false;
+bool gAnyBotResearch_HaveCombatShield = false;
+bool gAnyBotResearch_StartedTerranBuildingArmor = false;
+bool gAnyBotResearch_HaveTerranBuildingArmor = false;
+bool gAnyBotResearch_StartedNeosteelFrame = false;
+bool gAnyBotResearch_HaveNeosteelFrame = false;
+bool gAnyBotResearch_StartedHiSecAutoTracking = false;
+bool gAnyBotResearch_HaveHiSecAutoTracking = false;
+bool gAnyBotResearch_StartedTerranInfantryArmorsLevel1 = false;
+bool gAnyBotResearch_HaveTerranInfantryArmorsLevel1 = false;
+bool gAnyBotResearch_StartedTerranInfantryArmorsLevel2 = false;
+bool gAnyBotResearch_HaveTerranInfantryArmorsLevel2 = false;
+bool gAnyBotResearch_StartedTerranInfantryArmorsLevel3 = false;
+bool gAnyBotResearch_HaveTerranInfantryArmorsLevel3 = false;
+bool gAnyBotResearch_StartedTerranInfantryWeaponsLevel1 = false;
+bool gAnyBotResearch_HaveTerranInfantryWeaponsLevel1 = false;
+bool gAnyBotResearch_StartedTerranInfantryWeaponsLevel2 = false;
+bool gAnyBotResearch_HaveTerranInfantryWeaponsLevel2 = false;
+bool gAnyBotResearch_StartedTerranInfantryWeaponsLevel3 = false;
+bool gAnyBotResearch_HaveTerranInfantryWeaponsLevel3 = false;
+
+// Enemy Bases
+bool[4] gEnemyBases_BaseExists;
+int[4] gEnemyBases_WorkersAtBase;
+fixed[4] gEnemyBases_DPSAtBase;
+fixed[4] gEnemyBases_EstimatedHealthAtBase;
+fixed gEnemyBases_DroneModifier = 0.2;
+
+// Enemy Structures
+int gEnemyStructures_UnitCount = 0;
+EnemyUnit[300] gEnemyStructures_UnitList;
+//// Enemy Buildings WAYNE
+//// 0: Spawning Pool
+//// 1: Roach Warren
+////int[10] enemyStructureCount;
+////Keeps references to the actual building (This may be useful in the future)
+////unit[10] roachWarren;
+//List of all enemy unit types
+EnemyUnit[100] gEnemyArmy_BanelingNest;
+int gEnemyArmy_BanelingNestCount = 0;
+EnemyUnit[100] gEnemyArmy_CreepTower;
+int gEnemyArmy_CreepTowerCount = 0;
+EnemyUnit[100] gEnemyArmy_CreepTumorBurrowed;
+int gEnemyArmy_CreepTumorBurrowedCount = 0;
+EnemyUnit[100] gEnemyArmy_EvolutionChamber;
+int gEnemyArmy_EvolutionChamberCount = 0;
+EnemyUnit[100] gEnemyArmy_Extractor;
+int gEnemyArmy_ExtractorCount = 0;
+EnemyUnit[100] gEnemyArmy_GreaterSpire;
+int gEnemyArmy_GreaterSpireCount = 0;
+EnemyUnit[100] gEnemyArmy_Hatchery;
+int gEnemyArmy_HatcheryCount = 0;
+EnemyUnit[100] gEnemyArmy_Hive;
+int gEnemyArmy_HiveCount = 0;
+EnemyUnit[100] gEnemyArmy_HydraliskDen;
+int gEnemyArmy_HydraliskDenCount = 0;
+EnemyUnit[100] gEnemyArmy_InfestationPit;
+int gEnemyArmy_InfestationPitCount = 0;
+EnemyUnit[100] gEnemyArmy_Lair;
+int gEnemyArmy_LairCount = 0;
+EnemyUnit[100] gEnemyArmy_LurkerDen;
+int gEnemyArmy_LurkerDenCount = 0;
+EnemyUnit[100] gEnemyArmy_NydusCanal;
+int gEnemyArmy_NydusCanalCount = 0;
+EnemyUnit[100] gEnemyArmy_NydusNetwork;
+int gEnemyArmy_NydusNetworkCount = 0;
+EnemyUnit[100] gEnemyArmy_NydusWormCanal;
+int gEnemyArmy_NydusWormCanalCount = 0;
+EnemyUnit[100] gEnemyArmy_RoachWarren;
+int gEnemyArmy_RoachWarrenCount = 0;
+EnemyUnit[100] gEnemyArmy_SpawningPool;
+int gEnemyArmy_SpawningPoolCount = 0;
+EnemyUnit[100] gEnemyArmy_SpineCrawler;
+int gEnemyArmy_SpineCrawlerCount = 0;
+EnemyUnit[100] gEnemyArmy_SpineCrawlerUprooted;
+int gEnemyArmy_SpineCrawlerUprootedCount = 0;
+EnemyUnit[100] gEnemyArmy_Spire;
+int gEnemyArmy_SpireCount = 0;
+EnemyUnit[100] gEnemyArmy_SporeCrawler;
+int gEnemyArmy_SporeCrawlerCount = 0;
+EnemyUnit[100] gEnemyArmy_SporeCrawlerUprooted;
+int gEnemyArmy_SporeCrawlerUprootedCount = 0;
+EnemyUnit[100] gEnemyArmy_UltraliskCavern;
+int gEnemyArmy_UltraliskCavernCount = 0;
+
+
+// Enemy Army
+fixed gEnemyArmy_GlobalDPS = 0;
+fixed gEnemyArmy_GlobalEstimatedHealth = 0;
+//// Track All Units
+int gEnemyArmy_UnitCount = 0;
+EnemyUnit[300] gEnemyArmy_UnitList;
+//// Focus fire
+DamageUnit[200] gEnemyArmy_DamageUnitList;
+int gEnemyArmy_DamageUnitCount = 0;
+
+// Skill Level
+fixed gSkill_EnemySkillLevel = 1.0;
+
+// Initialize Arrays
+void BlackboardInitializeMyUnits() {
+    gUnitTypes_MyUnits[0] = "Banshee";
+    gUnitTypes_MyUnits[1] = "Battlecruiser";
+    gUnitTypes_MyUnits[2] = "Cyclone";
+    gUnitTypes_MyUnits[3] = "Ghost";
+    gUnitTypes_MyUnits[4] = "Hellion";
+    gUnitTypes_MyUnits[5] = "HellionTank";
+    gUnitTypes_MyUnits[6] = "HERC";
+    gUnitTypes_MyUnits[7] = "Liberator";
+    gUnitTypes_MyUnits[8] = "LiberatorAG";
+    gUnitTypes_MyUnits[9] = "Marauder";
+    gUnitTypes_MyUnits[10] = "Marine";
+    gUnitTypes_MyUnits[11] = "Medivac";
+    gUnitTypes_MyUnits[12] = "MULE";
+    gUnitTypes_MyUnits[13] = "Raven";
+    gUnitTypes_MyUnits[14] = "Reaper";
+    gUnitTypes_MyUnits[15] = "SCV";
+    gUnitTypes_MyUnits[16] = "SiegeTank";
+    gUnitTypes_MyUnits[17] = "SiegeTankSieged";
+    gUnitTypes_MyUnits[18] = "Thor";
+    gUnitTypes_MyUnits[19] = "VikingAssault";
+    gUnitTypes_MyUnits[20] = "VikingFighter";
+    gUnitTypes_MyUnits[21] = "WidowMine";
+    gUnitTypes_MyUnits[22] = "WidowMineBurrowed";
+}
+
+void BlackboardInitializeMyStructures() {
+    gUnitTypes_MyStructures[0] = "Armory";
+    gUnitTypes_MyStructures[1] = "AutoTurret";
+    gUnitTypes_MyStructures[2] = "Barracks";
+    gUnitTypes_MyStructures[3] = "BarracksFlying";
+    gUnitTypes_MyStructures[4] = "EngineeringBay";
+    gUnitTypes_MyStructures[5] = "Bunker";
+    gUnitTypes_MyStructures[6] = "CommandCenter";
+    gUnitTypes_MyStructures[7] = "CommandCenterFlying";
+    gUnitTypes_MyStructures[8] = "Factory";
+    gUnitTypes_MyStructures[9] = "FactoryFlying";
+    gUnitTypes_MyStructures[10] = "FusionCore";
+    gUnitTypes_MyStructures[11] = "GhostAcademy";
+    gUnitTypes_MyStructures[12] = "MissleTurret";
+    gUnitTypes_MyStructures[13] = "OrbitalCommand";
+    gUnitTypes_MyStructures[14] = "OrbitalCommandFlying";
+    gUnitTypes_MyStructures[15] = "PlanetaryFortress";
+    gUnitTypes_MyStructures[16] = "Reactor";
+    gUnitTypes_MyStructures[17] = "BarracksReactor";
+    gUnitTypes_MyStructures[18] = "FactoryReactor";
+    gUnitTypes_MyStructures[19] = "StarportReactor";
+    gUnitTypes_MyStructures[20] = "Refinery";
+    gUnitTypes_MyStructures[21] = "SensorTower";
+    gUnitTypes_MyStructures[22] = "Starport";
+    gUnitTypes_MyStructures[23] = "StarportFlying";
+    gUnitTypes_MyStructures[24] = "SupplyDepot";
+    gUnitTypes_MyStructures[25] = "SupplyDepotLowered";
+    gUnitTypes_MyStructures[26] = "TechLab";
+    gUnitTypes_MyStructures[27] = "BarracksTechLab";
+    gUnitTypes_MyStructures[28] = "FactoryTechLab";
+    gUnitTypes_MyStructures[29] = "StarportTechLab";
+}
+
+void BlackboardInitializeEnemyStructures() {
+    gUnitTypes_EnemyStructures[0] = "BanelingNest";
+    gUnitTypes_EnemyStructures[1] = "CreepTower";
+    gUnitTypes_EnemyStructures[2] = "CreepTumorBurrowed";
+    gUnitTypes_EnemyStructures[3] = "EvolutionChamber";
+    gUnitTypes_EnemyStructures[4] = "Extractor";
+    gUnitTypes_EnemyStructures[5] = "GreaterSpire";
+    gUnitTypes_EnemyStructures[6] = "Hatchery";
+    gUnitTypes_EnemyStructures[7] = "Hive";
+    gUnitTypes_EnemyStructures[8] = "HydraliskDen";
+    gUnitTypes_EnemyStructures[9] = "InfestationPit";
+    gUnitTypes_EnemyStructures[10] = "Lair";
+    gUnitTypes_EnemyStructures[11] = "LurkerDen";
+    gUnitTypes_EnemyStructures[12] = "NydusCanal";
+    gUnitTypes_EnemyStructures[13] = "NydusNetwork";
+    gUnitTypes_EnemyStructures[14] = "NydusWorm(Canal)";
+    gUnitTypes_EnemyStructures[15] = "RoachWarren";
+    gUnitTypes_EnemyStructures[16] = "SpawningPool";
+    gUnitTypes_EnemyStructures[17] = "SpineCrawler";
+    gUnitTypes_EnemyStructures[18] = "SpineCrawlerUprooted";
+    gUnitTypes_EnemyStructures[19] = "Spire";
+    gUnitTypes_EnemyStructures[20] = "SporeCrawler";
+    gUnitTypes_EnemyStructures[21] = "SporeCrawlerUprooted";
+    gUnitTypes_EnemyStructures[22] = "UltraliskCavern";
+}
+
+void BlackboardInitializeBases() {
+    int i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        // AnyBot Bases
+        gAnyBotBases_MineralsLeftAtBase[i] = 0;
+        gAnyBotBases_SCVMinersAtBase[i] = 0;
+        gAnyBotBases_SCVHarverstersAtBase[i] = 0;
+        gAnyBotBases_RefineriesAtBase[i] = 0;
+        gAnyBotBases_ExpansionAtBase[i] = false;
+        gAnyBotBases_UnderAttack[i] = false;
+        gAnyBotBases_ImportanceOfBase[i] = 0;
+
+        // Enemy Bases
+        gEnemyBases_BaseExists[i] = false;
+        gEnemyBases_WorkersAtBase[i] = 0;
+        gEnemyBases_DPSAtBase[i] = 0;
+        gEnemyBases_EstimatedHealthAtBase[i] = 0;
+    }
+    gAnyBotBases_ExpansionAtBase[0] = true;
+    gEnemyBases_BaseExists[0] = true;
+}
+
+void BlackboardInitializeArrays() {
+    BlackboardInitializeMyUnits();
+    BlackboardInitializeMyStructures();
+    BlackboardInitializeEnemyStructures();
+    BlackboardInitializeBases();
+}

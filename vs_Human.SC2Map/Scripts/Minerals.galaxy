@@ -1,0 +1,137 @@
+bool MineralsOnBaseOneEntered(bool checkConds, bool runActions) {
+    unit enteringUnit = EventUnit();
+    string unitType = UnitGetType(enteringUnit);
+
+    if (unitType == "MineralField750" || unitType == "RichMineralField750") {
+        gAnyBotBases_MineralsLeftAtBase[0] += 900;
+        DebugLog("Found minerals at base 1 bringing mineral count to :" + IntToString(gAnyBotBases_MineralsLeftAtBase[0]), "Minerals");
+    } else if (unitType == "MineralField" || unitType == "RichMineralField") {
+        gAnyBotBases_MineralsLeftAtBase[0] += 1500;
+        DebugLog("Found minerals at base 1 bringing mineral count to :" + IntToString(gAnyBotBases_MineralsLeftAtBase[0]), "Minerals");
+    }
+
+    return true;
+}
+
+bool MineralsOnBaseTwoEntered(bool checkConds, bool runActions) {
+    unit enteringUnit = EventUnit();
+    string unitType = UnitGetType(enteringUnit);
+
+    if (unitType == "MineralField750" || unitType == "RichMineralField750") {
+        gAnyBotBases_MineralsLeftAtBase[1] += 900;
+        DebugLog("Found minerals at base 3 bringing mineral count to :" + IntToString(gAnyBotBases_MineralsLeftAtBase[2]), "Minerals");
+    } else if (unitType == "MineralField" || unitType == "RichMineralField") {
+        gAnyBotBases_MineralsLeftAtBase[1] += 1500;
+        DebugLog("Found minerals at base 3 bringing mineral count to :" + IntToString(gAnyBotBases_MineralsLeftAtBase[2]), "Minerals");
+    }
+
+    return true;
+}
+
+bool MineralsOnBaseThreeEntered(bool checkConds, bool runActions) {
+    unit enteringUnit = EventUnit();
+    string unitType = UnitGetType(enteringUnit);
+
+    if (unitType == "MineralField750" || unitType == "RichMineralField750") {
+        gAnyBotBases_MineralsLeftAtBase[2] += 900;
+        DebugLog("Found minerals at base 3 bringing mineral count to :" + IntToString(gAnyBotBases_MineralsLeftAtBase[2]), "Minerals");
+    } else if (unitType == "MineralField" || unitType == "RichMineralField") {
+        gAnyBotBases_MineralsLeftAtBase[2] += 1500;
+        DebugLog("Found minerals at base 3 bringing mineral count to :" + IntToString(gAnyBotBases_MineralsLeftAtBase[2]), "Minerals");
+    }
+
+    return true;
+}
+
+bool MineralsOnBaseFourEntered(bool checkConds, bool runActions) {
+    unit enteringUnit = EventUnit();
+    string unitType = UnitGetType(enteringUnit);
+
+    if (unitType == "MineralField750" || unitType == "RichMineralField750") {
+        gAnyBotBases_MineralsLeftAtBase[3] += 900;
+        DebugLog("Found minerals at base 4 bringing mineral count to :" + IntToString(gAnyBotBases_MineralsLeftAtBase[3]), "Minerals");
+    } else if (unitType == "MineralField" || unitType == "RichMineralField") {
+        gAnyBotBases_MineralsLeftAtBase[3] += 1500;
+        DebugLog("Found minerals at base 4 bringing mineral count to :" + IntToString(gAnyBotBases_MineralsLeftAtBase[3]), "Minerals");
+    }
+
+    return true;
+}
+
+bool MineralsOnMineralDied(bool checkConds, bool runActions) {
+    // UNTESTED
+    unit dyingUnit = EventUnit();
+    int closestBase = -1;
+    int mineralsToRemove = 0;
+    string unitType = UnitGetType(dyingUnit);
+
+    // Determine the minerals to remove
+    if (unitType == "MineralField750" || unitType == "RichMineralField750") {
+        mineralsToRemove = 900;
+    } else if (unitType == "MineralField" || unitType == "RichMineralField") {
+        mineralsToRemove = 1500;
+    }
+
+    // Find the closest base
+    closestBase = UtilsClosestAnyBotBaseForUnit(dyingUnit);
+
+    // Remove the Minerals
+    gAnyBotBases_MineralsLeftAtBase[closestBase] -= mineralsToRemove;
+
+    DebugLog("Minerals depleted at base " + IntToString(closestBase) + ", mineral count: " + IntToString(gAnyBotBases_MineralsLeftAtBase[closestBase]), "Minerals");
+
+    return true;
+}
+
+void MineralsRegisterTriggers() {
+    trigger t;
+    int i = 0;
+    int count = 0;
+    unitgroup mineralGroup;
+    unit currentUnit;
+
+    t = TriggerCreate("MineralsOnBaseOneEntered");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase1"), true);
+
+    t = TriggerCreate("MineralsOnBaseTwoEntered");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase2"), true);
+
+    t = TriggerCreate("MineralsOnBaseThreeEntered");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase3"), true);
+
+    t = TriggerCreate("MineralsOnBaseFourEntered");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("AnyBotBase4"), true);
+
+    t = TriggerCreate("MineralsOnMineralDied");
+    mineralGroup = UnitGroup("MineralField", 2, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+    i = 0;
+    count = UnitGroupCount(mineralGroup, 0);
+    for (; i < count; i += 1) {
+        currentUnit = UnitGroupUnit(mineralGroup, i);
+        TriggerAddEventUnitDied(t, UnitRefFromUnit(currentUnit));
+    }
+
+    mineralGroup = UnitGroup("MineralField750", 2, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+    i = 0;
+    count = UnitGroupCount(mineralGroup, 0);
+    for (; i < count; i += 1) {
+        currentUnit = UnitGroupUnit(mineralGroup, i);
+        TriggerAddEventUnitDied(t, UnitRefFromUnit(currentUnit));
+    }
+
+    mineralGroup = UnitGroup("RichMineralField", 2, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+    i = 0;
+    count = UnitGroupCount(mineralGroup, 0);
+    for (; i < count; i += 1) {
+        currentUnit = UnitGroupUnit(mineralGroup, i);
+        TriggerAddEventUnitDied(t, UnitRefFromUnit(currentUnit));
+    }
+
+    mineralGroup = UnitGroup("RichMineralField750", 2, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+    i = 0;
+    count = UnitGroupCount(mineralGroup, 0);
+    for (; i < count; i += 1) {
+        currentUnit = UnitGroupUnit(mineralGroup, i);
+        TriggerAddEventUnitDied(t, UnitRefFromUnit(currentUnit));
+    }
+}

@@ -1,0 +1,43 @@
+bool VespeneRefineryCreated(bool checkConds, bool runActions) {
+    int closestBase = -1;
+    trigger t;
+
+    if (UnitGetType(EventUnitCreatedUnit()) != "Refinery") {
+        return true;
+    }
+
+    // Register the dying trigger
+    t = TriggerCreate("VespeneRefineryDestroyed");
+    TriggerAddEventUnitDied(t, UnitRefFromUnit(EventUnitCreatedUnit()));
+
+    // Find the closest base
+    closestBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit());
+
+    // Increment the base count
+    gAnyBotBases_RefineriesAtBase[closestBase] += 1;
+
+    return true;
+}
+
+bool VespeneRefineryDestroyed(bool checkConds, bool runActions) {
+    int closestBase = -1;
+
+    if (UnitGetType(EventUnit()) != "Refinery") {
+        return true;
+    }
+
+    // Find the closest base
+    closestBase = UtilsClosestAnyBotBaseForUnit(EventUnit());
+
+    // Increment the base count
+    gAnyBotBases_RefineriesAtBase[closestBase] -= 1;
+
+    return true;
+}
+
+void VespeneRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("VespeneRefineryCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+}

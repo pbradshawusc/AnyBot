@@ -1,0 +1,28 @@
+void DoSweepScanner(int baseNumber, point position){
+    int i=0;
+    bool found=false;
+    for (; i < gAnyBotStructures_CommandCenterCount; i += 1) {
+      if(UnitGetType(gAnyBotStructures_CommandCenterList[i].mUnit)=="OrbitalCommand" && baseNumber == gAnyBotStructures_CommandCenterList[i].mRecentBase){
+          if (gDebugLog_Enabled) {
+            UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, StringToText("found OrbitalCommand"));
+          }
+          UnitIssueOrder(gAnyBotStructures_CommandCenterList[i].mUnit, OrderTargetingPoint(AbilityCommand("ScannerSweep", 0), position), c_orderQueueReplace);
+          found=true;
+      }
+    }
+    if (gDebugLog_Enabled) {
+      if(found==false){
+          UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, StringToText("didn't find any OrbitalCommands in base ")+IntToText(baseNumber));
+      }
+
+    }
+}
+
+void TestSweepScanner(){
+    UnitCreate(1, "OrbitalCommand", c_unitCreateIgnorePlacement, gGeneral_AnyBotTeamNumber, PointFromName("AnyBotStart"), 270);
+    DoSweepScanner(0, PointFromName("AnyBotStart"));
+    DoSweepScanner(1, PointFromName("AnyBotStart"));
+    DoSweepScanner(2, PointFromName("AnyBotStart"));
+    DoSweepScanner(3, PointFromName("AnyBotStart"));
+    DoSweepScanner(4, PointFromName("AnyBotStart"));
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Regions>
+    <region id="1">
+        <name value="AnyBotBase1"/>
+        <shape type="circle">
+            <center value="115.2326,149.2556"/>
+            <radius value="19.718"/>
+        </shape>
+        <shape type="circle">
+            <center value="120.8251,135.212"/>
+            <radius value="9.859"/>
+        </shape>
+        <shape type="circle">
+            <center value="130.3925,144.46"/>
+            <radius value="9.859"/>
+        </shape>
+    </region>
+    <region id="2">
+        <name value="AnyBotBase2"/>
+        <shape type="circle">
+            <center value="153.1435,152.5615"/>
+            <radius value="13.5168"/>
+        </shape>
+    </region>
+    <region id="3">
+        <name value="AnyBotBase3"/>
+        <shape type="circle">
+            <center value="144.3947,120.7111"/>
+            <radius value="13.3171"/>
+        </shape>
+    </region>
+    <region id="4">
+        <name value="AnyBotBase4"/>
+        <shape type="circle">
+            <center value="111.5444,112.0756"/>
+            <radius value="14.7563"/>
+        </shape>
+        <shape type="circle">
+            <center value="122.7348,109.1123"/>
+            <radius value="10.88"/>
+        </shape>
+    </region>
+    <region id="5">
+        <name value="HumanBase1"/>
+        <shape type="circle">
+            <center value="55.2314,25.2851"/>
+            <radius value="14.7211"/>
+        </shape>
+        <shape type="circle">
+            <center value="51.2104,34.6572"/>
+            <radius value="7.3605"/>
+        </shape>
+    </region>
+    <region id="6">
+        <name value="HumanBase2"/>
+        <shape type="circle">
+            <center value="23.393,18.0693"/>
+            <radius value="11.1784"/>
+        </shape>
+    </region>
+    <region id="7">
+        <name value="HumanBase3"/>
+        <shape type="circle">
+            <center value="29.2941,49.1586"/>
+            <radius value="18.796"/>
+        </shape>
+    </region>
+    <region id="8">
+        <name value="HumanBase4"/>
+        <shape type="circle">
+            <center value="63.3281,55.462"/>
+            <radius value="14.7236"/>
+        </shape>
+    </region>
+    <region id="9">
+        <name value="AddonArea"/>
+        <shape type="circle">
+            <center value="116.7941,135.051"/>
+            <radius value="7.1335"/>
+        </shape>
+        <shape type="circle">
+            <center value="121.8024,132.8342"/>
+            <radius value="7.1335"/>
+        </shape>
+        <shape type="circle">
+            <center value="131.0197,143.3791"/>
+            <radius value="7.1335"/>
+        </shape>
+    </region>
+</Regions>

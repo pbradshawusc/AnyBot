@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=Aproveite a acessibilidade das expansões deste tipo de mapa para erguer um exército grandioso. /// Take advantage of the fact that expansions are easily accessible on this map to more easily build up a large army.
+DocInfo/DescShort=1x1 /// 1v1
+DocInfo/Name=Torres Crepusculares /// Dusk Towers
+MapInfo/Player00/Name=Neutro /// Neutral
+MapInfo/Player01/Name=Jogador 1 /// Player 1
+MapInfo/Player02/Name=Jogador 2 /// Player 2
+MapInfo/Player03/Name=Hostil
+MapInfo/Player04/Name=Jogador 4 /// Player 4
+MapInfo/Player05/Name=Hostil /// Hostile

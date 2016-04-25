@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=Воспользуйтесь тем, что на этой карте можно легко строить дополнительные базы. Так вы сможете создать большую армию.
+DocInfo/DescShort=1х1
+DocInfo/Name=Сумеречные башни
+MapInfo/Player00/Name=Нейтральный
+MapInfo/Player01/Name=Игрок 1
+MapInfo/Player02/Name=Игрок 2
+MapInfo/Player03/Name=Противник
+MapInfo/Player04/Name=Игрок 4
+MapInfo/Player05/Name=Противник

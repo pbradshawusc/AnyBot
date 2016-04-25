@@ -1,0 +1,64 @@
+bool SkillCheckCheck() {
+    if (RandomFixed(0, 1) <= gSkill_EnemySkillLevel) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool SkillCheckTick(bool checkConds, bool runActions) {
+    int mineralsFloated = PlayerGetPropertyInt((3 - gGeneral_AnyBotTeamNumber), c_playerPropMinerals);
+    int extraMineralsByAnyBot = PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropMineralsCollected) - PlayerGetPropertyInt((3 - gGeneral_AnyBotTeamNumber), c_playerPropMineralsCollected);
+    fixed mineralCollectionSkill = 1.0;
+    fixed mineralUsageSkill = 1.0;
+
+    fixed collectionWeight = 0.7;
+    fixed usageWeight = IntToFixed(1)-collectionWeight;
+    int collectionThreshold = 2000;
+    int floatingThreshold = 400;
+    int floatingMax = 1500;
+
+    // Determine if we aren't far enough in the game to effectively use the above metrics
+    if (PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropMineralsCollected) < 600) {
+        return true;
+    }
+
+    // Determine the efficiency of mining
+    if (extraMineralsByAnyBot <= 0) {
+        // The human player is gathering minerals just as quickly if not more quickly than AnyBot
+        mineralCollectionSkill = 1.0;
+    } else if (extraMineralsByAnyBot >= collectionThreshold) {
+        mineralCollectionSkill = 0.0;
+    } else {
+        // Scale linearly down to collecting minerals 600 slower
+        mineralCollectionSkill = IntToFixed(1) - (IntToFixed(extraMineralsByAnyBot) / IntToFixed(collectionThreshold));
+    }
+
+    // Determine the efficiency of using minerals
+    if (mineralsFloated <= floatingThreshold) {
+        // We aren't floating too many minerals that its out of control, and the floating count is less than ours
+        mineralUsageSkill = 1.0;
+    } else if (mineralsFloated <= PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropMinerals)) {
+        // We are floating more than 400 minerals, but still less than AnyBot, so this should be marked as good, but not great - probably really late game and can't produce fast enough
+        mineralUsageSkill = 0.75;
+    } else if (mineralsFloated >= floatingMax) {
+        // The player is floating more minerals than us, and more than 300 minerals
+        mineralUsageSkill = 0.0;
+    } else {
+        // The player is floating 400-1500 minerals but more than AnyBot
+        mineralUsageSkill = IntToFixed(1) - (IntToFixed(mineralsFloated - floatingThreshold) / IntToFixed(floatingMax - floatingThreshold));
+    }
+
+    // Now we have our mineral usage and collection skill
+    gSkill_EnemySkillLevel = collectionWeight * mineralCollectionSkill + usageWeight * mineralUsageSkill;
+    DebugLog("Overall Skill: " + FixedToString(gSkill_EnemySkillLevel, 2) + " from Mineral Collection: " + FixedToString(mineralCollectionSkill, 2) + " and Mineral Usage: " + FixedToString(mineralUsageSkill, 2), "SkillCheck");
+
+    return true;
+}
+
+void SkillCheckRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("SkillCheckTick");
+    TriggerAddEventTimePeriodic(t, 10, c_timeGame);
+}

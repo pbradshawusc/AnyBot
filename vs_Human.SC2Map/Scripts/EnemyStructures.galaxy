@@ -1,0 +1,403 @@
+//WAYNE
+void EnemyStructuresRegisterTriggers() {
+	trigger t = TriggerCreate("EnemyStructureBuilt");
+	TriggerAddEventUnitCreated (t, null, null, null);
+	t = TriggerCreate("EnemyStructureDestroyed");
+	TriggerAddEventUnitDied (t, null);
+}
+
+bool EnemyStructureBuilt(bool testConditions, bool runActions) {
+	unit structureBuilt = EventUnitCreatedUnit();
+	string unitType = UnitGetType(structureBuilt);
+	//if(UtilsIsUnitEnemyStructure(EventUnitCreatedUnit ())) {
+	//	UtilsAddEnemyStructure(structureBuilt);	
+	//}
+	if(UtilsIsUnitEnemyStructure(structureBuilt)) {
+		if (unitType == "BanelingNest") {
+	        gEnemyArmy_BanelingNest[gEnemyArmy_BanelingNestCount].mUnit = structureBuilt;
+	        gEnemyArmy_BanelingNest[gEnemyArmy_BanelingNestCount].mRecentBase = -1;
+	        gEnemyArmy_BanelingNestCount += 1;
+	    } else if (unitType == "CreepTower") {
+	        gEnemyArmy_CreepTower[gEnemyArmy_CreepTowerCount].mUnit = structureBuilt;
+	        gEnemyArmy_CreepTower[gEnemyArmy_CreepTowerCount].mRecentBase = -1;
+	        gEnemyArmy_CreepTowerCount += 1;
+	    } else if (unitType == "CreepTumorBurrowed") {
+	        gEnemyArmy_CreepTumorBurrowed[gEnemyArmy_CreepTumorBurrowedCount].mUnit = structureBuilt;
+	        gEnemyArmy_CreepTumorBurrowed[gEnemyArmy_CreepTumorBurrowedCount].mRecentBase = -1;
+	        gEnemyArmy_CreepTumorBurrowedCount += 1;
+	    } else if (unitType == "EvolutionChamber") {
+	        gEnemyArmy_EvolutionChamber[gEnemyArmy_EvolutionChamberCount].mUnit = structureBuilt;
+	        gEnemyArmy_EvolutionChamber[gEnemyArmy_EvolutionChamberCount].mRecentBase = -1;
+	        gEnemyArmy_EvolutionChamberCount += 1;
+	    } else if (unitType == "Extractor") {
+	        gEnemyArmy_Extractor[gEnemyArmy_ExtractorCount].mUnit = structureBuilt;
+	        gEnemyArmy_Extractor[gEnemyArmy_ExtractorCount].mRecentBase = -1;
+	        gEnemyArmy_ExtractorCount += 1;
+	    } else if (unitType == "GreaterSpire") {
+	        gEnemyArmy_GreaterSpire[gEnemyArmy_GreaterSpireCount].mUnit = structureBuilt;
+	        gEnemyArmy_GreaterSpire[gEnemyArmy_GreaterSpireCount].mRecentBase = -1;
+	        gEnemyArmy_GreaterSpireCount += 1;
+	    } else if (unitType == "Hatchery") {
+	        gEnemyArmy_Hatchery[gEnemyArmy_HatcheryCount].mUnit = structureBuilt;
+	        gEnemyArmy_Hatchery[gEnemyArmy_HatcheryCount].mRecentBase = -1;
+	        gEnemyArmy_HatcheryCount += 1;
+	    } else if (unitType == "Hive") {
+	        gEnemyArmy_Hive[gEnemyArmy_HiveCount].mUnit = structureBuilt;
+	        gEnemyArmy_Hive[gEnemyArmy_HiveCount].mRecentBase = -1;
+	        gEnemyArmy_HiveCount += 1;
+	    } else if (unitType == "HydraliskDen") {
+	        gEnemyArmy_HydraliskDen[gEnemyArmy_HydraliskDenCount].mUnit = structureBuilt;
+	        gEnemyArmy_HydraliskDen[gEnemyArmy_HydraliskDenCount].mRecentBase = -1;
+	        gEnemyArmy_HydraliskDenCount += 1;
+	    } else if (unitType == "InfestationPit") {
+	        gEnemyArmy_InfestationPit[gEnemyArmy_InfestationPitCount].mUnit = structureBuilt;
+	        gEnemyArmy_InfestationPit[gEnemyArmy_InfestationPitCount].mRecentBase = -1;
+	        gEnemyArmy_InfestationPitCount += 1;
+	    } else if (unitType == "Lair") {
+	        gEnemyArmy_Lair[gEnemyArmy_LairCount].mUnit = structureBuilt;
+	        gEnemyArmy_Lair[gEnemyArmy_LairCount].mRecentBase = -1;
+	        gEnemyArmy_LairCount += 1;
+	    } else if (unitType == "LurkerDen") {
+	        gEnemyArmy_LurkerDen[gEnemyArmy_LurkerDenCount].mUnit = structureBuilt;
+	        gEnemyArmy_LurkerDen[gEnemyArmy_LurkerDenCount].mRecentBase = -1;
+	        gEnemyArmy_LurkerDenCount += 1;
+	    } else if (unitType == "NydusCanal") {
+	        gEnemyArmy_NydusCanal[gEnemyArmy_NydusCanalCount].mUnit = structureBuilt;
+	        gEnemyArmy_NydusCanal[gEnemyArmy_NydusCanalCount].mRecentBase = -1;
+	        gEnemyArmy_NydusCanalCount += 1;
+	    } else if (unitType == "NydusNetwork") {
+	        gEnemyArmy_NydusNetwork[gEnemyArmy_NydusNetworkCount].mUnit = structureBuilt;
+	        gEnemyArmy_NydusNetwork[gEnemyArmy_NydusNetworkCount].mRecentBase = -1;
+	        gEnemyArmy_NydusNetworkCount += 1;
+	    } else if (unitType == "NydusWorm(Canal)") {
+	        gEnemyArmy_NydusWormCanal[gEnemyArmy_NydusWormCanalCount].mUnit = structureBuilt;
+	        gEnemyArmy_NydusWormCanal[gEnemyArmy_NydusWormCanalCount].mRecentBase = -1;
+	        gEnemyArmy_NydusWormCanalCount += 1;
+	    } else if (unitType == "RoachWarren") {
+	        gEnemyArmy_RoachWarren[gEnemyArmy_RoachWarrenCount].mUnit = structureBuilt;
+	        gEnemyArmy_RoachWarren[gEnemyArmy_RoachWarrenCount].mRecentBase = -1;
+	        gEnemyArmy_RoachWarrenCount += 1;
+	    } else if (unitType == "SpawningPool") {
+	        gEnemyArmy_SpawningPool[gEnemyArmy_SpawningPoolCount].mUnit = structureBuilt;
+	        gEnemyArmy_SpawningPool[gEnemyArmy_SpawningPoolCount].mRecentBase = -1;
+	        gEnemyArmy_SpawningPoolCount += 1;
+	    } else if (unitType == "SpineCrawler") {
+	        gEnemyArmy_SpineCrawler[gEnemyArmy_SpineCrawlerCount].mUnit = structureBuilt;
+	        gEnemyArmy_SpineCrawler[gEnemyArmy_SpineCrawlerCount].mRecentBase = -1;
+	        gEnemyArmy_SpineCrawlerCount += 1;
+	    } else if (unitType == "SpineCrawlerUprooted") {
+	        gEnemyArmy_SpineCrawlerUprooted[gEnemyArmy_SpineCrawlerUprootedCount].mUnit = structureBuilt;
+	        gEnemyArmy_SpineCrawlerUprooted[gEnemyArmy_SpineCrawlerUprootedCount].mRecentBase = -1;
+	        gEnemyArmy_SpineCrawlerUprootedCount += 1;
+	    } else if (unitType == "Spire") {
+	        gEnemyArmy_Spire[gEnemyArmy_SpireCount].mUnit = structureBuilt;
+	        gEnemyArmy_Spire[gEnemyArmy_SpireCount].mRecentBase = -1;
+	        gEnemyArmy_SpireCount += 1;
+	    } else if (unitType == "SporeCrawler") {
+	        gEnemyArmy_SporeCrawler[gEnemyArmy_SporeCrawlerCount].mUnit = structureBuilt;
+	        gEnemyArmy_SporeCrawler[gEnemyArmy_SporeCrawlerCount].mRecentBase = -1;
+	        gEnemyArmy_SporeCrawlerCount += 1;
+	    } else if (unitType == "SporeCrawlerUprooted") {
+	        gEnemyArmy_SporeCrawlerUprooted[gEnemyArmy_SporeCrawlerUprootedCount].mUnit = structureBuilt;
+	        gEnemyArmy_SporeCrawlerUprooted[gEnemyArmy_SporeCrawlerUprootedCount].mRecentBase = -1;
+	        gEnemyArmy_SporeCrawlerUprootedCount += 1;
+	    } else if (unitType == "UltraliskCavern") {
+	        gEnemyArmy_UltraliskCavern[gEnemyArmy_UltraliskCavernCount].mUnit = structureBuilt;
+	        gEnemyArmy_UltraliskCavern[gEnemyArmy_UltraliskCavernCount].mRecentBase = -1;
+	        gEnemyArmy_UltraliskCavernCount += 1;
+	    }
+	}
+	return true;
+}
+
+bool EnemyStructureDestroyed(bool testConditions, bool runActions) {
+
+	unit structureDestroyed = EventUnit();
+	int i = 0;
+	
+	//if(UtilsIsUnitEnemyStructure(EventUnit())) {
+	//	UtilsRemoveEnemyStructure(structureDestroyed);
+	//}
+	if(UtilsIsUnitEnemyStructure(structureDestroyed)) {
+
+		if(UnitGetType(structureDestroyed) == "BanelingNest") {
+			i = 0;
+			for(; i < gEnemyArmy_BanelingNestCount; i += 1) {
+				if (gEnemyArmy_BanelingNest[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_BanelingNestCount; i += 1) {
+            	gEnemyArmy_BanelingNest[i].mUnit = gEnemyArmy_BanelingNest[i+1].mUnit;
+            	gEnemyArmy_BanelingNest[i].mRecentBase = gEnemyArmy_BanelingNest[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_BanelingNestCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "CreepTower") {
+			i = 0;
+			for(; i < gEnemyArmy_CreepTowerCount; i += 1) {
+				if (gEnemyArmy_CreepTower[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_CreepTowerCount; i += 1) {
+            	gEnemyArmy_CreepTower[i].mUnit = gEnemyArmy_CreepTower[i+1].mUnit;
+            	gEnemyArmy_CreepTower[i].mRecentBase = gEnemyArmy_CreepTower[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_CreepTowerCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "CreepTumorBurrowed") {
+			i = 0;
+			for(; i < gEnemyArmy_CreepTumorBurrowedCount; i += 1) {
+				if (gEnemyArmy_CreepTumorBurrowed[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_CreepTumorBurrowedCount; i += 1) {
+            	gEnemyArmy_CreepTumorBurrowed[i].mUnit = gEnemyArmy_CreepTumorBurrowed[i+1].mUnit;
+            	gEnemyArmy_CreepTumorBurrowed[i].mRecentBase = gEnemyArmy_CreepTumorBurrowed[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_CreepTumorBurrowedCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "EvolutionChamber") {
+			i = 0;
+			for(; i < gEnemyArmy_EvolutionChamberCount; i += 1) {
+				if (gEnemyArmy_EvolutionChamber[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_EvolutionChamberCount; i += 1) {
+            	gEnemyArmy_EvolutionChamber[i].mUnit = gEnemyArmy_EvolutionChamber[i+1].mUnit;
+            	gEnemyArmy_EvolutionChamber[i].mRecentBase = gEnemyArmy_EvolutionChamber[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_EvolutionChamberCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "Extractor") {
+			i = 0;
+			for(; i < gEnemyArmy_ExtractorCount; i += 1) {
+				if (gEnemyArmy_Extractor[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_ExtractorCount; i += 1) {
+            	gEnemyArmy_Extractor[i].mUnit = gEnemyArmy_Extractor[i+1].mUnit;
+            	gEnemyArmy_Extractor[i].mRecentBase = gEnemyArmy_Extractor[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_ExtractorCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "GreaterSpire") {
+			i = 0;
+			for(; i < gEnemyArmy_GreaterSpireCount; i += 1) {
+				if (gEnemyArmy_GreaterSpire[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_GreaterSpireCount; i += 1) {
+            	gEnemyArmy_GreaterSpire[i].mUnit = gEnemyArmy_GreaterSpire[i+1].mUnit;
+            	gEnemyArmy_GreaterSpire[i].mRecentBase = gEnemyArmy_GreaterSpire[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_GreaterSpireCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "Hatchery") {
+			i = 0;
+			for(; i < gEnemyArmy_HatcheryCount; i += 1) {
+				if (gEnemyArmy_Hatchery[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_HatcheryCount; i += 1) {
+            	gEnemyArmy_Hatchery[i].mUnit = gEnemyArmy_Hatchery[i+1].mUnit;
+            	gEnemyArmy_Hatchery[i].mRecentBase = gEnemyArmy_Hatchery[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_HatcheryCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "Hive") {
+			i = 0;
+			for(; i < gEnemyArmy_HiveCount; i += 1) {
+				if (gEnemyArmy_Hive[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_HiveCount; i += 1) {
+            	gEnemyArmy_Hive[i].mUnit = gEnemyArmy_Hive[i+1].mUnit;
+            	gEnemyArmy_Hive[i].mRecentBase = gEnemyArmy_Hive[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_HiveCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "HydraliskDen") {
+			i = 0;
+			for(; i < gEnemyArmy_HydraliskDenCount; i += 1) {
+				if (gEnemyArmy_HydraliskDen[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_HydraliskDenCount; i += 1) {
+            	gEnemyArmy_HydraliskDen[i].mUnit = gEnemyArmy_HydraliskDen[i+1].mUnit;
+            	gEnemyArmy_HydraliskDen[i].mRecentBase = gEnemyArmy_HydraliskDen[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_HydraliskDenCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "InfestationPit") {
+			i = 0;
+			for(; i < gEnemyArmy_InfestationPitCount; i += 1) {
+				if (gEnemyArmy_InfestationPit[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_InfestationPitCount; i += 1) {
+            	gEnemyArmy_InfestationPit[i].mUnit = gEnemyArmy_InfestationPit[i+1].mUnit;
+            	gEnemyArmy_InfestationPit[i].mRecentBase = gEnemyArmy_InfestationPit[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_InfestationPitCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "Lair") {
+			i = 0;
+			for(; i < gEnemyArmy_LairCount; i += 1) {
+				if (gEnemyArmy_Lair[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_LairCount; i += 1) {
+            	gEnemyArmy_Lair[i].mUnit = gEnemyArmy_Lair[i+1].mUnit;
+            	gEnemyArmy_Lair[i].mRecentBase = gEnemyArmy_Lair[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_LairCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "LurkerDen") {
+			i = 0;
+			for(; i < gEnemyArmy_LurkerDenCount; i += 1) {
+				if (gEnemyArmy_LurkerDen[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_LurkerDenCount; i += 1) {
+            	gEnemyArmy_LurkerDen[i].mUnit = gEnemyArmy_LurkerDen[i+1].mUnit;
+            	gEnemyArmy_LurkerDen[i].mRecentBase = gEnemyArmy_LurkerDen[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_LurkerDenCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "NydusCanal") {
+			i = 0;
+			for(; i < gEnemyArmy_NydusCanalCount; i += 1) {
+				if (gEnemyArmy_NydusCanal[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_NydusCanalCount; i += 1) {
+            	gEnemyArmy_NydusCanal[i].mUnit = gEnemyArmy_NydusCanal[i+1].mUnit;
+            	gEnemyArmy_NydusCanal[i].mRecentBase = gEnemyArmy_NydusCanal[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_NydusCanalCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "NydusNetwork") {
+			i = 0;
+			for(; i < gEnemyArmy_NydusNetworkCount; i += 1) {
+				if (gEnemyArmy_NydusNetwork[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_NydusNetworkCount; i += 1) {
+            	gEnemyArmy_NydusNetwork[i].mUnit = gEnemyArmy_NydusNetwork[i+1].mUnit;
+            	gEnemyArmy_NydusNetwork[i].mRecentBase = gEnemyArmy_NydusNetwork[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_NydusNetworkCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "NydusWorm(Canal)") {
+			i = 0;
+			for(; i < gEnemyArmy_NydusWormCanalCount; i += 1) {
+				if (gEnemyArmy_NydusWormCanal[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_NydusWormCanalCount; i += 1) {
+            	gEnemyArmy_NydusWormCanal[i].mUnit = gEnemyArmy_NydusWormCanal[i+1].mUnit;
+            	gEnemyArmy_NydusWormCanal[i].mRecentBase = gEnemyArmy_NydusWormCanal[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_NydusWormCanalCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "RoachWarren") {
+			i = 0;
+			for(; i < gEnemyArmy_RoachWarrenCount; i += 1) {
+				if (gEnemyArmy_RoachWarren[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_RoachWarrenCount; i += 1) {
+            	gEnemyArmy_RoachWarren[i].mUnit = gEnemyArmy_RoachWarren[i+1].mUnit;
+            	gEnemyArmy_RoachWarren[i].mRecentBase = gEnemyArmy_RoachWarren[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_RoachWarrenCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "SpawningPool") {
+			i = 0;
+			for(; i < gEnemyArmy_SpawningPoolCount; i += 1) {
+				if (gEnemyArmy_SpawningPool[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_SpawningPoolCount; i += 1) {
+            	gEnemyArmy_SpawningPool[i].mUnit = gEnemyArmy_SpawningPool[i+1].mUnit;
+            	gEnemyArmy_SpawningPool[i].mRecentBase = gEnemyArmy_SpawningPool[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_SpawningPoolCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "SpineCrawler") {
+			i = 0;
+			for(; i < gEnemyArmy_SpineCrawlerCount; i += 1) {
+				if (gEnemyArmy_SpineCrawler[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_SpineCrawlerCount; i += 1) {
+            	gEnemyArmy_SpineCrawler[i].mUnit = gEnemyArmy_SpineCrawler[i+1].mUnit;
+            	gEnemyArmy_SpineCrawler[i].mRecentBase = gEnemyArmy_SpineCrawler[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_SpineCrawlerCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "SpineCrawlerUprooted") {
+			i = 0;
+			for(; i < gEnemyArmy_SpineCrawlerUprootedCount; i += 1) {
+				if (gEnemyArmy_SpineCrawlerUprooted[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_SpineCrawlerUprootedCount; i += 1) {
+            	gEnemyArmy_SpineCrawlerUprooted[i].mUnit = gEnemyArmy_SpineCrawlerUprooted[i+1].mUnit;
+            	gEnemyArmy_SpineCrawlerUprooted[i].mRecentBase = gEnemyArmy_SpineCrawlerUprooted[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_SpineCrawlerUprootedCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "Spire") {
+			i = 0;
+			for(; i < gEnemyArmy_SpireCount; i += 1) {
+				if (gEnemyArmy_Spire[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_SpireCount; i += 1) {
+            	gEnemyArmy_Spire[i].mUnit = gEnemyArmy_Spire[i+1].mUnit;
+            	gEnemyArmy_Spire[i].mRecentBase = gEnemyArmy_Spire[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_SpireCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "SporeCrawler") {
+			i = 0;
+			for(; i < gEnemyArmy_SporeCrawlerCount; i += 1) {
+				if (gEnemyArmy_SporeCrawler[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_SporeCrawlerCount; i += 1) {
+            	gEnemyArmy_SporeCrawler[i].mUnit = gEnemyArmy_SporeCrawler[i+1].mUnit;
+            	gEnemyArmy_SporeCrawler[i].mRecentBase = gEnemyArmy_SporeCrawler[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_SporeCrawlerCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "SporeCrawlerUprooted") {
+			i = 0;
+			for(; i < gEnemyArmy_SporeCrawlerUprootedCount; i += 1) {
+				if (gEnemyArmy_SporeCrawlerUprooted[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_SporeCrawlerUprootedCount; i += 1) {
+            	gEnemyArmy_SporeCrawlerUprooted[i].mUnit = gEnemyArmy_SporeCrawlerUprooted[i+1].mUnit;
+            	gEnemyArmy_SporeCrawlerUprooted[i].mRecentBase = gEnemyArmy_SporeCrawlerUprooted[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_SporeCrawlerUprootedCount -= 1;
+		} else if(UnitGetType(structureDestroyed) == "UltraliskCavern") {
+			i = 0;
+			for(; i < gEnemyArmy_UltraliskCavernCount; i += 1) {
+				if (gEnemyArmy_UltraliskCavern[i].mUnit == EventUnit()) {
+                	break;
+            	}
+            }
+            for (; i < gEnemyArmy_UltraliskCavernCount; i += 1) {
+            	gEnemyArmy_UltraliskCavern[i].mUnit = gEnemyArmy_UltraliskCavern[i+1].mUnit;
+            	gEnemyArmy_UltraliskCavern[i].mRecentBase = gEnemyArmy_UltraliskCavern[i+1].mRecentBase;
+        	}
+        	gEnemyArmy_UltraliskCavernCount -= 1;
+		}
+	}
+
+	return true;
+}

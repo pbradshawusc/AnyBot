@@ -1,0 +1,187 @@
+bool UtilsIsUnitMyStructure(unit u) {
+    int i = 0;
+
+    //if (UnitGetOwner(u) == gGeneral_AnyBotTeamNumber) {
+        //return true;
+    //} else if (UnitGetOwner(u) == (3 - gGeneral_AnyBotTeamNumber)) {
+        //return false;
+    //}
+
+    for (; i < 30; i += 1) {
+        if (UnitGetType(u) == gUnitTypes_MyStructures[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool UtilsIsUnitMyUnit(unit u) {
+    int i = 0;
+
+    //if (UnitGetOwner(u) == gGeneral_AnyBotTeamNumber) {
+        //return true;
+    //} else if (UnitGetOwner(u) == (3 - gGeneral_AnyBotTeamNumber)) {
+        //return false;
+    //}
+
+    for (; i < 24; i += 1) {
+        if (UnitGetType(u) == gUnitTypes_MyUnits[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool UtilsIsUnitEnemyStructure(unit u) {
+    int i = 0;
+
+    //if (UnitGetOwner(u) == gGeneral_AnyBotTeamNumber) {
+        //return false;
+    //} else if (UnitGetOwner(u) == (3 - gGeneral_AnyBotTeamNumber)) {
+        //return true;
+    //}
+
+    for (; i < 23; i += 1) {
+        if (UnitGetType(u) == gUnitTypes_EnemyStructures[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool UtilsIsUnitEnemyUnit(unit u) {
+    int i = 0;
+
+    //if (UnitGetOwner(u) == gGeneral_AnyBotTeamNumber) {
+        //return true;
+    //} else if (UnitGetOwner(u) == (3 - gGeneral_AnyBotTeamNumber)) {
+        //return false;
+    //}
+
+    for (; i < 23; i += 1) {
+        if (UnitGetType(u) == gUnitTypes_EnemyStructures[i]) {
+            return false;
+        }
+    }
+
+    i = 0;
+    for (; i < 24; i += 1) {
+        if (UnitGetType(u) == gUnitTypes_MyUnits[i]) {
+            return false;
+        }
+    }
+
+    i = 0;
+    for (; i < 30; i += 1) {
+        if (UnitGetType(u) == gUnitTypes_MyStructures[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UtilsIsUnitOwnedByAnyBot(unit u) {
+    if (UnitGetOwner(u) == gGeneral_AnyBotTeamNumber) {
+        return true;
+    }
+    return false;
+}
+
+int UtilsClosestEnemyBaseForUnit(unit u) {
+    int closestBase = -1;
+    fixed closestDistance = 9999;
+    point dyingPosition = UnitGetPosition(u);
+    fixed tempDistance = 0;
+
+    // Find the closest base
+    tempDistance = DistanceBetweenPoints(dyingPosition, PointFromName("HumanStart"));
+    if (closestDistance > tempDistance) {
+        closestDistance = tempDistance;
+        closestBase = 1;
+    }
+
+    tempDistance = DistanceBetweenPoints(dyingPosition, PointFromName("HumanBase2"));
+    if (closestDistance > tempDistance) {
+        closestDistance = tempDistance;
+        closestBase = 2;
+    }
+
+    tempDistance = DistanceBetweenPoints(dyingPosition, PointFromName("HumanBase3"));
+    if (closestDistance > tempDistance) {
+        closestDistance = tempDistance;
+        closestBase = 3;
+    }
+
+    tempDistance = DistanceBetweenPoints(dyingPosition, PointFromName("HumanBase4"));
+    if (closestDistance > tempDistance) {
+        closestDistance = tempDistance;
+        closestBase = 4;
+    }
+
+    return closestBase;
+}
+
+int UtilsClosestAnyBotBaseForUnit(unit u) {
+    int closestBase = -1;
+    fixed closestDistance = 9999;
+    point dyingPosition = UnitGetPosition(u);
+    fixed tempDistance = 0;
+
+    // Find the closest base
+    tempDistance = DistanceBetweenPoints(dyingPosition, PointFromName("AnyBotStart"));
+    if (closestDistance > tempDistance) {
+        closestDistance = tempDistance;
+        closestBase = 1;
+    }
+
+    tempDistance = DistanceBetweenPoints(dyingPosition, PointFromName("AnyBotBase2"));
+    if (closestDistance > tempDistance) {
+        closestDistance = tempDistance;
+        closestBase = 2;
+    }
+
+    tempDistance = DistanceBetweenPoints(dyingPosition, PointFromName("AnyBotBase3"));
+    if (closestDistance > tempDistance) {
+        closestDistance = tempDistance;
+        closestBase = 3;
+    }
+
+    tempDistance = DistanceBetweenPoints(dyingPosition, PointFromName("AnyBotBase4"));
+    if (closestDistance > tempDistance) {
+        closestDistance = tempDistance;
+        closestBase = 4;
+    }
+
+    return closestBase;
+}
+
+fixed UtilsGetDPSForUnit(unit u) {
+    fixed maxDamage = 0;
+    fixed tempDamage = 0;
+    int i = 1;
+
+    DebugLog("Unit Type: " + UnitGetType(u), "DPS");
+    DebugLog("Unit Weapon Count: " + IntToString(UnitWeaponCount(u)), "DPS");
+    for (; i < UnitWeaponCount(u) + 1; i += 1) {
+        DebugLog("Unit Weapon Damage " + IntToString(i) + ": " + FixedToString(UnitWeaponDamage(u, i, 0, true), 2), "DPS");
+        DebugLog("Unit Weapon Speed " + IntToString(i) + ": " + FixedToString(UnitWeaponSpeedMultiplier(u, i), 2), "DPS");
+        tempDamage = UnitWeaponDamage(u, i, 0, true);
+        tempDamage *= UnitWeaponSpeedMultiplier(u, i);
+        if (tempDamage > maxDamage) {
+            maxDamage = tempDamage;
+        }
+    }
+
+    return maxDamage;
+}
+
+void UtilsAddToBuildOrder(string unitToAdd, int supply)
+{
+    gAnyBotPurchasing_BuildOrder[gAnyBotPurchasing_BuildOrderLength].unitName = unitToAdd;
+    gAnyBotPurchasing_BuildOrder[gAnyBotPurchasing_BuildOrderLength].supply = supply;
+    gAnyBotPurchasing_BuildOrderLength += 1;
+}

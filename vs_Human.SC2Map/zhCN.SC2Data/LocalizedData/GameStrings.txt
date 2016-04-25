@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=这个地图上很容开分矿，利用这一特性可以快速发展起大部队。 /// Take advantage of the fact that expansions are easily accessible on this map to more easily build up a large army.
+DocInfo/DescShort=1v1
+DocInfo/Name=暮色之塔 /// Dusk Towers
+MapInfo/Player00/Name=中立
+MapInfo/Player01/Name=玩家1 /// Player 1
+MapInfo/Player02/Name=玩家2 /// Player 2
+MapInfo/Player03/Name=敌对
+MapInfo/Player04/Name=玩家4 /// Player 4
+MapInfo/Player05/Name=敌对

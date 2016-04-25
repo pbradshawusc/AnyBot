@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=Sfrutta la facile accessibilità delle espansioni di questa mappa per creare più facilmente un'armata numerosa.
+DocInfo/DescShort=1v1
+DocInfo/Name=Torri del crepuscolo
+MapInfo/Player00/Name=Neutrale
+MapInfo/Player01/Name=Giocatore 1
+MapInfo/Player02/Name=Giocatore 2
+MapInfo/Player03/Name=Nemico
+MapInfo/Player04/Name=Giocatore 4
+MapInfo/Player05/Name=Nemico

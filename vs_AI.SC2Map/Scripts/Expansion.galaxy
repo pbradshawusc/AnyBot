@@ -1,0 +1,154 @@
+bool ExpansionReadyToExpand() {
+    int i = 0;
+    bool canExpand = false;
+    bool shouldFalse = false;
+
+    if (gAnyBotBases_BuildingExpansion) {
+        return false;
+    }
+
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_ExpansionAtBase[i] && gAnyBotBases_SCVMinersAtBase[i] < ((gAnyBotBases_MineralsLeftAtBase[i] * 3) / 1500)) {
+            // We have an unsaturated base
+            shouldFalse = true;
+        } else if(gAnyBotBases_ExpansionAtBase[i] == false) {
+            // This base is yet to be expanded to
+            canExpand = true;
+        }
+    }
+
+    if (canExpand && SkillCheckCheck()) {
+        if (RandomFixed(0, 1) < 0.1) {
+            DebugLog("Failed Skill Check - Building next expansion", "SkillCheck");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (shouldFalse) {
+        return false;
+    }
+
+    return canExpand;
+}
+
+bool ExpansionCommandCenterCreated(bool checkConds, bool runActions) {
+    if (gAnyBotBases_ExpansionAtBase[0] == false && UnitGetType(EventUnitCreatedUnit()) == "CommandCenter") {
+        gAnyBotBases_ExpansionAtBase[0] = true;
+    }
+
+    return true;
+}
+
+bool ExpansionCommandCenterConstructed(bool checkConds, bool runActions) {
+    int baseNum = -1;
+    int i = 0;
+    unitgroup ug;
+    int balance;
+    int rebalance;
+
+    if (UnitGetType(EventUnitProgressUnit()) == "CommandCenter") {
+        for (; i < gGeneral_MaxBases; i += 1) {
+            if (gAnyBotBases_ExpansionAtBase[i] == false) {
+                baseNum = i;
+                break;
+            }
+        }
+
+        if (baseNum == -1) {
+            DebugLog("Command Center constructed after max expansions completed.", "Error");
+            return true;
+        }
+
+        UnitIssueOrder(EventUnitProgressUnit(), Order(AbilityCommand("CommandCenterLiftOff", 0)), c_orderQueueAddToEnd);
+        if (baseNum != 0) {
+            UnitIssueOrder(EventUnitProgressUnit(), OrderTargetingPoint(AbilityCommand("CommandCenterLand", 0), UnitTypePlacementFromPoint("CommandCenter", 2, PointFromName("AnyBotBase" + IntToString(baseNum + 1)), 20)), c_orderQueueAddToEnd);
+        } else {
+            UnitIssueOrder(EventUnitProgressUnit(), OrderTargetingPoint(AbilityCommand("CommandCenterLand", 0), UnitTypePlacementFromPoint("CommandCenter", 2, PointFromName("AnyBotStart"), 20)), c_orderQueueAddToEnd);
+        }
+
+        gAnyBotBases_ExpansionAtBase[baseNum] = true;
+        gAnyBotBases_BuildingExpansion = false;
+
+        // Rebalance our workers
+        if (baseNum != 0) {
+            balance = gAnyBotBases_SCVMinersAtBase[baseNum-1] / 2;
+            rebalance = 0;
+            ug = UnitGroup("MineralField", c_playerAny, RegionEntireMap(), null, 0);
+            UnitGroupAddUnitGroup(ug, UnitGroup("MineralField750", c_playerAny, RegionEntireMap(), null, 0));
+            UnitGroupAddUnitGroup(ug, UnitGroup("RichMineralField", c_playerAny, RegionEntireMap(), null, 0));
+            UnitGroupAddUnitGroup(ug, UnitGroup("RichMineralField750", c_playerAny, RegionEntireMap(), null, 0));
+            i = 0;
+            for (; i < gAnyBotWorkers_SCVCount; i += 1) {
+                if (gAnyBotWorkers_SCVList[i].mRecentBase == baseNum) {
+                    if (AbilityCommandGetAbility(OrderGetAbilityCommand(UnitOrder(gAnyBotWorkers_SCVList[i].mUnit, 0))) == "SCVHarvest" && UnitGetType(OrderGetTargetUnit(UnitOrder(gAnyBotWorkers_SCVList[i].mUnit, 0))) != "Refinery") {
+                        gAnyBotWorkers_SCVList[i].mRecentBase = baseNum + 1;
+                        UnitIssueOrder(gAnyBotWorkers_SCVList[i].mUnit, OrderTargetingUnit(AbilityCommand("SCVHarvest", 0), UnitGroupClosestToPoint(ug, PointFromName("AnyBotBase" + IntToString(baseNum+1)))), c_orderQueueReplace);
+                        rebalance += 1;
+                        if (rebalance >= balance) {
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            balance = gAnyBotBases_SCVMinersAtBase[baseNum+1] / 2;
+            rebalance = 0;
+            ug = UnitGroup("MineralField", c_playerAny, RegionEntireMap(), null, 0);
+            UnitGroupAddUnitGroup(ug, UnitGroup("MineralField750", c_playerAny, RegionEntireMap(), null, 0));
+            UnitGroupAddUnitGroup(ug, UnitGroup("RichMineralField", c_playerAny, RegionEntireMap(), null, 0));
+            UnitGroupAddUnitGroup(ug, UnitGroup("RichMineralField750", c_playerAny, RegionEntireMap(), null, 0));
+            i = 0;
+            for (; i < gAnyBotWorkers_SCVCount; i += 1) {
+                if (gAnyBotWorkers_SCVList[i].mRecentBase == baseNum+2) {
+                    if (AbilityCommandGetAbility(OrderGetAbilityCommand(UnitOrder(gAnyBotWorkers_SCVList[i].mUnit, 0))) == "SCVHarvest") {
+                        gAnyBotWorkers_SCVList[i].mRecentBase = baseNum+1;
+                        UnitIssueOrder(gAnyBotWorkers_SCVList[i].mUnit, OrderTargetingUnit(AbilityCommand("SCVHarvest", 0), UnitGroupClosestToPoint(ug, PointFromName("AnyBotBase" + IntToString(baseNum+1)))), c_orderQueueReplace);
+                        rebalance += 1;
+                        if (rebalance >= balance) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (baseNum == 1) {
+            // Move our marines to the new rally point
+            i = 0;
+            if (gAnyBotArmy_CurrentAttackGroup == 1) {
+                for (; i < gAnyBotArmy_AttackGroupOneCount; i += 1) {
+                    UnitIssueOrder(gAnyBotArmy_AttackGroupOneList[i].mUnit, OrderTargetingPoint(AbilityCommand("move", 0), PointFromName("AnyBotRally2")), c_orderQueueReplace);
+                }
+            } else {
+                for (; i < gAnyBotArmy_AttackGroupTwoCount; i += 1) {
+                    UnitIssueOrder(gAnyBotArmy_AttackGroupTwoList[i].mUnit, OrderTargetingPoint(AbilityCommand("move", 0), PointFromName("AnyBotRally2")), c_orderQueueReplace);
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+bool ExpansionBasesSaturated() {
+    int i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_ExpansionAtBase[i] && gAnyBotBases_SCVMinersAtBase[i] < ((gAnyBotBases_MineralsLeftAtBase[i] * 2) / 1500)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void ExpansionRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("ExpansionCommandCenterCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+
+    t = TriggerCreate("ExpansionCommandCenterConstructed");
+    TriggerAddEventUnitConstructProgress(t, null, c_unitProgressStageComplete);
+}

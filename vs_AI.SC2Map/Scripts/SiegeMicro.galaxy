@@ -1,0 +1,76 @@
+bool SiegeMicroOnUnitRangeEnter(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnitRangeUnit()) != "SiegeTank") {
+        return true;
+    }
+
+    if (UtilsIsUnitOwnedByAnyBot(EventUnit()) || UnitGetOwner(EventUnit()) == 0) {
+        return true;
+    }
+
+    if (SkillCheckCheck()) {
+        return true;
+    }
+
+    UnitIssueOrder(EventUnitRangeUnit(), OrderTargetingUnit(AbilityCommand("attack", 0), EventUnit()), c_orderQueueAddToFront);
+    UnitIssueOrder(EventUnitRangeUnit(), Order(AbilityCommand("SiegeMode", 0)), c_orderQueueAddToFront);
+
+    return true;
+}
+
+bool SiegeMicroOnUnitRangeExit(bool checkConds, bool runActions) {
+    if (UnitGetType(EventUnitRangeUnit()) != "SiegeTankSieged") {
+        return true;
+    }
+
+    if (UnitCount(null, (3-gGeneral_AnyBotTeamNumber), RegionCircle(UnitGetPosition(EventUnitRangeUnit()), 15), gGeneral_DefaultFilter, 0) == 0) {
+        // No enemies left in range
+        UnitIssueOrder(EventUnitRangeUnit(), Order(AbilityCommand("Unsiege", 0)), c_orderQueueAddToFront);
+    }
+
+    return true;
+}
+
+bool SiegeMicroOnUnitCreated(bool checkConds, bool runActions) {
+    trigger t;
+    if (UnitGetType(EventUnitCreatedUnit()) == "SiegeTank") {
+        t = TriggerCreate("SiegeMicroOnUnitRangeEnter");
+        TriggerAddEventUnitRange(t, null, EventUnitCreatedUnit(), 11, true);
+
+        t = TriggerCreate("SiegeMicroOnUnitRangeExit");
+        TriggerAddEventUnitRange(t, null, EventUnitCreatedUnit(), 13, false);
+    }
+
+    return true;
+}
+
+bool SiegeMicroOnUnitDied(bool checkConds, bool runActions) {
+    unitgroup ug;
+    int i;
+    if (UtilsIsUnitOwnedByAnyBot(EventUnit())) {
+        return true;
+    }
+
+    ug = UnitGroup("SiegeTankSieged", gGeneral_AnyBotTeamNumber, RegionCircle(UnitGetPosition(EventUnit()), 15), gGeneral_DefaultFilter, 0);
+    if (UnitGroupCount(ug, 0) > 0) {
+        // We have a siege tank to unsiege potentially
+        i = 1;
+        for (; i <= UnitGroupCount(ug, 0); i += 1) {
+            if (UnitCount(null, (3-gGeneral_AnyBotTeamNumber), RegionCircle(UnitGetPosition(UnitGroupUnit(ug, i)), 15), gGeneral_DefaultFilter, 0) == 0) {
+                // No enemies left in range
+                UnitIssueOrder(EventUnit(), Order(AbilityCommand("Unsiege", 0)), c_orderQueueAddToFront);
+            }
+        }
+    }
+
+    return true;
+}
+
+void SiegeMicroRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("SiegeMicroOnUnitCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+
+    t = TriggerCreate("SiegeMicroOnUnitDied");
+    TriggerAddEventUnitDied(t, null);
+}

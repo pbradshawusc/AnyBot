@@ -1,0 +1,136 @@
+unit[1000] gRespondedBanelings;
+int gNumRespondedBanelings = 0;
+
+void SpreadRegisterTriggers()
+{
+     trigger t;
+
+     t = TriggerCreate("SpreadOnUnitRange");
+     TriggerAddEventUnitRange(t, null, null, 15, true);
+}
+
+fixed SpreadNormalizeX(fixed x, fixed y) {
+  fixed length = SquareRoot(((x) * (x)) + ((y) + (y)));
+  return x / length;
+}
+
+fixed SpreadNormalizeY(fixed x, fixed y) {
+  fixed length = SquareRoot(((x) * (x)) + ((y) + (y)));
+  return y / length;
+}
+
+bool SpreadOnUnitRange(bool checkConds, bool runActions)
+{
+  unit originatingUnit = EventUnitRangeUnit();
+  text originatingUnitName = UnitGetName(originatingUnit);
+  unit enteringUnit = EventUnit();
+  text enteringUnitName = UnitGetName(enteringUnit);
+  int i = 0;
+  int k = 0;
+  int m = 0;
+  fixed originatingX;
+  fixed originatingY;
+  fixed otherX;
+  fixed otherY;
+  fixed rangeSquared = 15*15;
+  unit[1000] currentUnitGroup;
+  int currentUnitGroupCount = 1;
+  bool inCurrentGroup;
+  fixed centerX = 0;
+  fixed centerY = 0;
+  fixed xDistance;
+  fixed yDistance;
+  fixed normalizedX;
+  fixed normalizedY;
+  fixed perpendicularX;
+  fixed perpendicularY;
+  unit [1000] sortedCurrentUnits;
+  fixed dotProduct;
+  fixed otherDotProduct;
+  int idealIndex;
+  int groupSize;
+  int numGroups = 5;
+  fixed splitDistance = 2.0;
+  bool shouldRespond = true;
+  unitgroup ug;
+
+  currentUnitGroup[0] = originatingUnit;
+
+  if (UnitIsAlive(originatingUnit) && UnitIsAlive(enteringUnit)) {
+    if (UnitGetType(enteringUnit) == "Baneling") {
+        // Determine if we should respond to this Baneling
+      i = 0;
+      for (; i < gNumRespondedBanelings; i += 1) {
+        if (gRespondedBanelings[i] == enteringUnit) {
+          shouldRespond = false;
+        }
+      }
+      if (shouldRespond == false) {
+        return true;
+      } else {
+        gRespondedBanelings[gNumRespondedBanelings] = enteringUnit;
+        gNumRespondedBanelings += 1;
+      }
+
+      // One of our units has come in range of a baneling. We should handle behavior here
+      ug = UnitGroup(null, gGeneral_AnyBotTeamNumber, RegionCircle(UnitGetPosition(EventUnit()), 15), gGeneral_DefaultFilter, 0);
+      UnitGroupRemoveUnitGroup(ug, UnitGroup("SCV", gGeneral_AnyBotTeamNumber, RegionCircle(UnitGetPosition(EventUnit()), 15), gGeneral_DefaultFilter, 0));
+      UnitGroupRemoveUnitGroup(ug, UnitGroup("MULE", gGeneral_AnyBotTeamNumber, RegionCircle(UnitGetPosition(EventUnit()), 15), gGeneral_DefaultFilter, 0));
+
+      currentUnitGroupCount = UnitGroupCount(ug, c_unitCountAlive);
+      i = 0;
+      for (; i < currentUnitGroupCount; i += 1) {
+        currentUnitGroup[i] = UnitGroupUnit(ug, i + 1);
+      }
+
+      // Upon reaching this point, our current unit group should be filled with all units within this grouping range
+      //UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, StringToText("Units in group: " + IntToString(currentUnitGroupCount)));
+      // Find the center point of the group
+      i = 0;
+      for (; i < currentUnitGroupCount; i+=1) {
+        centerX += (PointGetX(UnitGetPosition(currentUnitGroup[i])));
+        centerY += (PointGetY(UnitGetPosition(currentUnitGroup[i])));
+      }
+      centerX /= IntToFixed(currentUnitGroupCount);
+      centerY /= IntToFixed(currentUnitGroupCount);
+      // Determine what direction the Baneling is coming from
+      otherX = (PointGetX(UnitGetPosition(enteringUnit)));
+      otherY = (PointGetY(UnitGetPosition(enteringUnit)));
+      xDistance = otherX - centerX;
+      yDistance = otherY - centerY;
+      normalizedX = SpreadNormalizeX(xDistance, yDistance);
+      normalizedY = SpreadNormalizeY(xDistance, yDistance);
+      // Find the perpendicular line to organize the units along
+      perpendicularX = -normalizedY;
+      perpendicularY = normalizedX;
+      // Sort the units based on their distance along this line
+
+
+      // Now that our units are sorted along the line, we can break them up into groups based and assign them positions to go
+      groupSize = currentUnitGroupCount / numGroups;
+      i = 0;
+      for (; i < currentUnitGroupCount; i += 1) {
+        if (i == 0) {
+            UnitIssueOrder(currentUnitGroup[i], OrderTargetingPoint(AbilityCommand("move", 0), UnitGetPosition(enteringUnit)), c_orderQueueAddToFront);
+        } else if (i / groupSize == 0) {
+          // Move -2 spaces
+          UnitIssueOrder(currentUnitGroup[i], OrderTargetingPoint(AbilityCommand("move", 0), Point(centerX - 2.0 * splitDistance * perpendicularX, centerY - 2 * splitDistance * perpendicularY)), c_orderQueueAddToFront);
+        } else if (i / groupSize == 1) {
+          // Move -1 space
+          UnitIssueOrder(currentUnitGroup[i], OrderTargetingPoint(AbilityCommand("move", 0), Point(centerX - 1 * splitDistance * perpendicularX, centerY - 1 * splitDistance * perpendicularY)), c_orderQueueAddToFront);
+        } else if (i / groupSize == 2) {
+          // Move to center
+          UnitIssueOrder(currentUnitGroup[i], OrderTargetingPoint(AbilityCommand("move", 0), Point(centerX, centerY)), c_orderQueueAddToFront);
+        } else if (i / groupSize == 3) {
+          // Move 1 space
+          UnitIssueOrder(currentUnitGroup[i], OrderTargetingPoint(AbilityCommand("move", 0), Point(centerX + 1 * splitDistance * perpendicularX, centerY + 1 * splitDistance * perpendicularY)), c_orderQueueAddToFront);
+        } else {
+          // Move 2 spaces
+          UnitIssueOrder(currentUnitGroup[i], OrderTargetingPoint(AbilityCommand("move", 0), Point(centerX + 2 * splitDistance * perpendicularX, centerY + 2 * splitDistance * perpendicularY)), c_orderQueueAddToFront);
+        }
+      }
+    }
+  }
+
+  return true;
+}

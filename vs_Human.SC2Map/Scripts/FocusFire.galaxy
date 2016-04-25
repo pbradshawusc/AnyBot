@@ -1,0 +1,71 @@
+bool FocusFireInternalAddDamageUnit(unit u, fixed damage) {
+    int i = 0;
+
+    for (; i < gEnemyArmy_DamageUnitCount; i += 1) {
+        if (gEnemyArmy_DamageUnitList[i].mUnit == u) {
+            if (UnitGetPropertyInt(gEnemyArmy_DamageUnitList[i].mUnit, c_unitPropLife, true) > gEnemyArmy_DamageUnitList[i].mDamage) {
+                gEnemyArmy_DamageUnitList[i].mDamage += damage;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    gEnemyArmy_DamageUnitList[gEnemyArmy_DamageUnitCount].mUnit = u;
+    gEnemyArmy_DamageUnitList[gEnemyArmy_DamageUnitCount].mDamage = damage;
+    gEnemyArmy_DamageUnitCount += 1;
+    return true;
+}
+
+bool FocusFireInternalRemoveDamageUnit(unit u) {
+    int i = 0;
+    bool found = false;
+    for (; i < gEnemyArmy_DamageUnitCount; i += 1) {
+        if (gEnemyArmy_DamageUnitList[i].mUnit == u) {
+            found = true;
+            break;
+        }
+    }
+    for (; i < gEnemyArmy_DamageUnitCount-1; i += 1) {
+        if (gEnemyArmy_DamageUnitList[i].mUnit == u) {
+            gEnemyArmy_DamageUnitList[i].mUnit = gEnemyArmy_DamageUnitList[i+1].mUnit;
+            gEnemyArmy_DamageUnitList[i].mDamage = gEnemyArmy_DamageUnitList[i+1].mDamage;
+        }
+    }
+    if (found) {
+        gEnemyArmy_DamageUnitCount -= 1;
+    }
+    return true;
+}
+
+bool FocusFireRange(bool checkConds, bool runActions) {
+    // First check that the originating unit is ours
+    if (!UtilsIsUnitOwnedByAnyBot(EventUnitRangeUnit())) {
+        return true;
+    }
+
+    // Now check that this is an enemy unit coming into range
+    if (!UtilsIsUnitEnemyUnit(EventUnit())) {
+        return true;
+    }
+
+    // Check if this unit is already assigned
+    if (OrderGetTargetUnit(UnitOrder(EventUnitRangeUnit(), 1)) != null) {
+        return true;
+    }
+
+    // Try to assign the unit
+    if (FocusFireInternalAddDamageUnit(EventUnit(), UnitWeaponDamage(EventUnitRangeUnit(), 1, 0, true))) {
+        // Assigned successfully, issue the order
+        UnitIssueOrder(EventUnitRangeUnit(), OrderTargetingUnit(AbilityCommand("attack", 0), EventUnit()), c_orderQueueAddToFront);
+    }
+
+    return true;
+}
+
+void FocusFireRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("FocusFireRange");
+    TriggerAddEventUnitRange(t, null, null, 30, true);
+}

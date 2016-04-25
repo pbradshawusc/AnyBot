@@ -1,0 +1,183 @@
+bool EnemyBasesEnterBaseOne(bool checkConds, bool runActions) {
+    fixed dps = UtilsGetDPSForUnit(EventUnit());
+    if (UnitGetType(EventUnit()) == "Drone" || UnitGetType(EventUnit()) == "DroneBurrowed") {
+        gEnemyBases_WorkersAtBase[0] += 1;
+        gEnemyBases_DPSAtBase[0] += UtilsGetDPSForUnit(EventUnit()) * gEnemyBases_DroneModifier;
+        gEnemyBases_EstimatedHealthAtBase[0] += UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+    } else if (UtilsIsUnitEnemyUnit(EventUnit()) && dps != 0) {
+        gEnemyBases_DPSAtBase[0] += dps;
+        gEnemyBases_EstimatedHealthAtBase[0] += UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+    }
+
+    return true;
+}
+
+bool EnemyBasesExitBaseOne(bool checkConds, bool runActions) {
+    fixed dps = UtilsGetDPSForUnit(EventUnit());
+    if (UnitGetType(EventUnit()) == "Drone" || UnitGetType(EventUnit()) == "DroneBurrowed") {
+        gEnemyBases_WorkersAtBase[0] -= 1;
+        gEnemyBases_DPSAtBase[0] -= UtilsGetDPSForUnit(EventUnit()) * gEnemyBases_DroneModifier;
+        gEnemyBases_EstimatedHealthAtBase[0] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+    } else if (UtilsIsUnitEnemyUnit(EventUnit()) && dps != 0) {
+        gEnemyBases_DPSAtBase[0] -= dps;
+        gEnemyBases_EstimatedHealthAtBase[0] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+    }
+
+    return true;
+}
+
+bool EnemyBasesEnterBaseTwo(bool checkConds, bool runActions) {
+    fixed dps = UtilsGetDPSForUnit(EventUnit());
+    if (UnitGetType(EventUnit()) == "Drone" || UnitGetType(EventUnit()) == "DroneBurrowed") {
+        gEnemyBases_WorkersAtBase[1] += 1;
+        gEnemyBases_DPSAtBase[1] += UtilsGetDPSForUnit(EventUnit()) * gEnemyBases_DroneModifier;
+        gEnemyBases_EstimatedHealthAtBase[1] += UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+    } else if (UtilsIsUnitEnemyUnit(EventUnit()) && dps != 0) {
+        gEnemyBases_DPSAtBase[1] += dps;
+        gEnemyBases_EstimatedHealthAtBase[1] += UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+    }
+
+    return true;
+}
+
+bool EnemyBasesExitBaseTwo(bool checkConds, bool runActions) {
+    fixed dps = UtilsGetDPSForUnit(EventUnit());
+    if (UnitGetType(EventUnit()) == "Drone" || UnitGetType(EventUnit()) == "DroneBurrowed") {
+        gEnemyBases_WorkersAtBase[1] -= 1;
+        gEnemyBases_DPSAtBase[1] -= UtilsGetDPSForUnit(EventUnit()) * gEnemyBases_DroneModifier;
+        gEnemyBases_EstimatedHealthAtBase[1] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+    } else if (UtilsIsUnitEnemyUnit(EventUnit()) && dps != 0) {
+        gEnemyBases_DPSAtBase[1] -= dps;
+        gEnemyBases_EstimatedHealthAtBase[1] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+    }
+
+    return true;
+}
+
+bool EnemyBasesEnterBaseThree(bool checkConds, bool runActions) {
+    fixed dps = UtilsGetDPSForUnit(EventUnit());
+    if (UnitGetType(EventUnit()) == "Drone" || UnitGetType(EventUnit()) == "DroneBurrowed") {
+        gEnemyBases_WorkersAtBase[2] += 1;
+        gEnemyBases_DPSAtBase[2] += UtilsGetDPSForUnit(EventUnit()) * gEnemyBases_DroneModifier;
+        gEnemyBases_EstimatedHealthAtBase[2] += UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+    } else if (UtilsIsUnitEnemyUnit(EventUnit()) && dps != 0) {
+        gEnemyBases_DPSAtBase[2] += dps;
+        gEnemyBases_EstimatedHealthAtBase[2] += UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+    }
+
+    return true;
+}
+
+bool EnemyBasesExitBaseThree(bool checkConds, bool runActions) {
+    fixed dps = UtilsGetDPSForUnit(EventUnit());
+    if (UnitGetType(EventUnit()) == "Drone" || UnitGetType(EventUnit()) == "DroneBurrowed") {
+        gEnemyBases_WorkersAtBase[2] -= 1;
+        gEnemyBases_DPSAtBase[2] -= UtilsGetDPSForUnit(EventUnit()) * gEnemyBases_DroneModifier;
+        gEnemyBases_EstimatedHealthAtBase[2] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+    } else if (UtilsIsUnitEnemyUnit(EventUnit()) && dps != 0) {
+        gEnemyBases_DPSAtBase[2] -= dps;
+        gEnemyBases_EstimatedHealthAtBase[2] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+    }
+
+    return true;
+}
+
+bool EnemyBasesEnterBaseFour(bool checkConds, bool runActions) {
+    fixed dps = UtilsGetDPSForUnit(EventUnit());
+    if (UnitGetType(EventUnit()) == "Drone" || UnitGetType(EventUnit()) == "DroneBurrowed") {
+        gEnemyBases_WorkersAtBase[3] += 1;
+        gEnemyBases_DPSAtBase[3] += UtilsGetDPSForUnit(EventUnit()) * gEnemyBases_DroneModifier;
+        gEnemyBases_EstimatedHealthAtBase[3] += UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+    } else if (UtilsIsUnitEnemyUnit(EventUnit()) && dps != 0) {
+        gEnemyBases_DPSAtBase[3] += dps;
+        gEnemyBases_EstimatedHealthAtBase[3] += UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+    }
+
+    return true;
+}
+
+bool EnemyBasesExitBaseFour(bool checkConds, bool runActions) {
+    fixed dps = UtilsGetDPSForUnit(EventUnit());
+    if (UnitGetType(EventUnit()) == "Drone" || UnitGetType(EventUnit()) == "DroneBurrowed") {
+        gEnemyBases_WorkersAtBase[3] -= 1;
+        gEnemyBases_DPSAtBase[3] -= UtilsGetDPSForUnit(EventUnit()) * gEnemyBases_DroneModifier;
+        gEnemyBases_EstimatedHealthAtBase[3] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+    } else if (UtilsIsUnitEnemyUnit(EventUnit()) && dps != 0) {
+        gEnemyBases_DPSAtBase[3] -= dps;
+        gEnemyBases_EstimatedHealthAtBase[3] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+    }
+
+    return true;
+}
+
+bool EnemyBasesUnitDied(bool checkConds, bool runActions) {
+    int baseNum;
+    int i = 0;
+    fixed dps;
+    if (!UtilsIsUnitOwnedByAnyBot(EventUnit())) {
+        // This unit died, check what base they are at
+        baseNum = UtilsClosestEnemyBaseForUnit(EventUnit());
+
+        // Update the health and dps of that base
+        dps = UtilsGetDPSForUnit(EventUnit());
+        if (UnitGetType(EventUnit()) == "Drone") {
+            gEnemyBases_DPSAtBase[baseNum - 1] -= dps * gEnemyBases_DroneModifier;
+            gEnemyBases_EstimatedHealthAtBase[baseNum - 1] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true) * gEnemyBases_DroneModifier;
+        } if (dps != 0 && UtilsIsUnitEnemyUnit(EventUnit())) {
+            gEnemyBases_DPSAtBase[baseNum - 1] -= dps;
+            gEnemyBases_EstimatedHealthAtBase[baseNum - 1] -= UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true);
+        }
+
+        // Check if there are other structures at that base
+        for (; i < gEnemyStructures_UnitCount; i += 1) {
+            if (gEnemyStructures_UnitList[i].mUnit != EventUnit() && gEnemyStructures_UnitList[i].mRecentBase == baseNum) {
+                // This base still exists
+                return true;
+            }
+        }
+        // We found no structures at the base
+        gEnemyBases_BaseExists[baseNum - 1] = false;
+
+        // Tell our army to reevaluate.
+        if (baseNum == gAnyBotArmy_AttackGroupOneTarget) {
+            DebugLog("Check continue Attack with Group 1", "Attack");
+            ArmyShouldAttack(-20, 1);
+        }
+        if (baseNum == gAnyBotArmy_AttackGroupTwoTarget) {
+            DebugLog("Check continue Attack with Group 2", "Attack");
+            ArmyShouldAttack(-20, 2);
+        }
+    }
+    return true;
+}
+
+void EnemyBasesRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("EnemyBasesEnterBaseOne");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("HumanBase1"), true);
+
+    t = TriggerCreate("EnemyBasesExitBaseOne");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("HumanBase1"), false);
+
+    t = TriggerCreate("EnemyBasesEnterBaseTwo");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("HumanBase2"), true);
+
+    t = TriggerCreate("EnemyBasesExitBaseTwo");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("HumanBase2"), false);
+
+    t = TriggerCreate("EnemyBasesEnterBaseThree");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("HumanBase3"), true);
+
+    t = TriggerCreate("EnemyBasesExitBaseThree");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("HumanBase3"), false);
+
+    t = TriggerCreate("EnemyBasesEnterBaseFour");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("HumanBase4"), true);
+
+    t = TriggerCreate("EnemyBasesExitBaseFour");
+    TriggerAddEventUnitRegion(t, null, RegionFromName("HumanBase4"), false);
+
+    t = TriggerCreate("EnemyBasesUnitDied");
+    TriggerAddEventUnitDied(t, null);
+}

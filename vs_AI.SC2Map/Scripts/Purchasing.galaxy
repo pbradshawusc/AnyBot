@@ -1,0 +1,1471 @@
+int PurchasingCanBuySCVAtLowestBase() {
+    int i = 0;
+    int lowestBase = 0;
+    bool[4] eligibleBases;
+
+    for (; i < gGeneral_MaxBases; i += 1) {
+        eligibleBases[i] = false;
+    }
+
+    i = 0;
+    for (; i < gAnyBotStructures_CommandCenterCount; i += 1) {
+        if (UnitQueueGetProperty(gAnyBotStructures_CommandCenterList[i].mUnit, c_unitQueuePropertyUsed) <= 1 && !UnitTestState(gAnyBotStructures_CommandCenterList[i].mUnit, c_unitStateUnderConstruction)) {
+            eligibleBases[gAnyBotStructures_CommandCenterList[i].mRecentBase - 1] = true;
+        }
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_ExpansionAtBase[i] && eligibleBases[i] && gAnyBotBases_SCVMinersAtBase[i] < gAnyBotBases_SCVMinersAtBase[lowestBase]) {
+            lowestBase = i;
+        }
+    }
+
+    if (!eligibleBases[lowestBase]) {
+        return -1;
+    }
+
+    i = 0;
+    for (; i < gAnyBotStructures_CommandCenterCount; i += 1) {
+        if (gAnyBotStructures_CommandCenterList[i].mRecentBase - 1 == lowestBase && UnitQueueGetProperty(gAnyBotStructures_CommandCenterList[i].mUnit, c_unitQueuePropertyUsed) <= 1 && !UnitTestState(gAnyBotStructures_CommandCenterList[i].mUnit, c_unitStateUnderConstruction)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+bool PurchasingLowestBaseUnsaturated() {
+    int i = 0;
+    int lowestBase = 0;
+    bool[4] eligibleBases;
+
+    for (; i < gGeneral_MaxBases; i += 1) {
+        eligibleBases[i] = false;
+    }
+
+    i = 0;
+    for (; i < gAnyBotStructures_CommandCenterCount; i += 1) {
+        if (UnitQueueGetProperty(gAnyBotStructures_CommandCenterList[i].mUnit, c_unitQueuePropertyUsed) <= 1 && !UnitTestState(gAnyBotStructures_CommandCenterList[i].mUnit, c_unitStateUnderConstruction)) {
+            eligibleBases[gAnyBotStructures_CommandCenterList[i].mRecentBase - 1] = true;
+        }
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_ExpansionAtBase[i] && eligibleBases[i] && gAnyBotBases_SCVMinersAtBase[i] < gAnyBotBases_SCVMinersAtBase[lowestBase]) {
+            lowestBase = i;
+        }
+    }
+
+    if (!eligibleBases[lowestBase]) {
+        return false;
+    }
+
+    if (gAnyBotBases_SCVMinersAtBase[lowestBase] > 20) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void PurchasingBuySCVAtBase(int baseNumber)
+{
+    if (gAnyBotBases_SCVMinersAtBase[baseNumber] < 26) {
+        UnitIssueOrder(gAnyBotStructures_CommandCenterList[baseNumber].mUnit, Order(AbilityCommand("CommandCenterTrain", 0)), c_orderQueueAddToEnd);
+    }
+}
+
+bool PurchasingBuyBarracksAtLowestBase() {
+    int i = 0;
+    int lowestBase = 0;
+    int[4] barracksAtBases;
+    bool[4] baseEligible;
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        barracksAtBases[i] = 0;
+    }
+
+    i = 0;
+    for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+        barracksAtBases[gAnyBotStructures_BarracksList[i].mRecentBase - 1] += 1;
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (i == 1 && barracksAtBases[i] >= 1) {
+            baseEligible[i] = false;
+        } else {
+            baseEligible[i] = true;
+        }
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_ExpansionAtBase[i] && barracksAtBases[i] < barracksAtBases[lowestBase]) {
+            lowestBase = i;
+        }
+    }
+
+    if (barracksAtBases[lowestBase] >= 3) {
+        return false;
+    }
+
+    DebugLog("Building Barracks", "Purchasing");
+
+    WorkersBuildItem("Barracks", lowestBase + 1);
+
+    return true;
+}
+
+bool PurchasingBuyFactoryAtLowestBase() {
+    int i = 0;
+    int lowestBase = 0;
+    int[4] factoriesAtBases;
+    bool[4] baseEligible;
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        factoriesAtBases[i] = 0;
+    }
+
+    i = 0;
+    for (; i < gAnyBotStructures_FactoryCount; i += 1) {
+        factoriesAtBases[gAnyBotStructures_FactoryList[i].mRecentBase - 1] += 1;
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (i == 1 && factoriesAtBases[i] >= 0) {
+            baseEligible[i] = false;
+        } else {
+            baseEligible[i] = true;
+        }
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_ExpansionAtBase[i] && factoriesAtBases[i] < factoriesAtBases[lowestBase]) {
+            lowestBase = i;
+        }
+    }
+
+    if (factoriesAtBases[lowestBase] >= 1) {
+        return false;
+    }
+
+    DebugLog("Building Factory", "Purchasing");
+
+    WorkersBuildItem("Factory", lowestBase + 1);
+
+    return true;
+}
+
+bool PurchasingBuyStarportAtLowestBase() {
+    int i = 0;
+    int lowestBase = 0;
+    int[4] starportsAtBases;
+    bool[4] baseEligible;
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        starportsAtBases[i] = 0;
+    }
+
+    i = 0;
+    for (; i < gAnyBotStructures_StarportCount; i += 1) {
+        starportsAtBases[gAnyBotStructures_StarportList[i].mRecentBase - 1] += 1;
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (i == 1 && starportsAtBases[i] >= 0) {
+            baseEligible[i] = false;
+        } else {
+            baseEligible[i] = true;
+        }
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_ExpansionAtBase[i] && starportsAtBases[i] < starportsAtBases[lowestBase]) {
+            lowestBase = i;
+        }
+    }
+
+    if (starportsAtBases[lowestBase] >= 1) {
+        return false;
+    }
+
+    DebugLog("Building Starport", "Purchasing");
+
+    WorkersBuildItem("Starport", lowestBase + 1);
+
+    return true;
+}
+
+int PurchasingLowestBaseForItem(string item) {
+    int lowestBase = -1;
+    int i = 0;
+    int itemsAtLowest = 1000;
+    int[4] itemsAtBase;
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        itemsAtBase[i] = 0;
+    }
+
+    if (item == "Barracks") {
+        i = 0;
+        for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+            itemsAtBase[gAnyBotStructures_BarracksList[i].mRecentBase - 1] += 1;
+        }
+        i = 0;
+        for (; i < gGeneral_MaxBases; i += 1) {
+            if (lowestBase == -1 && gAnyBotBases_ExpansionAtBase[i]) {
+                lowestBase = i;
+            } else if (gAnyBotBases_ExpansionAtBase[i] && itemsAtBase[lowestBase] > itemsAtBase[i]) {
+                lowestBase = i;
+            }
+        }
+    }
+
+    return lowestBase+1;
+}
+
+int PurchasingCanBuyUnitAtLowestBarracks(string unitName) {
+    int i = 0;
+    int lowestUsed = 3;
+    int lowestBarracks;
+    int unitNumber;
+    bool techLabRequired = false;
+    int reactorBonus = 0;
+    if (unitName == "Marine")
+    {
+        unitNumber = 0;
+    }
+    else if (unitName == "Marauder")
+    {
+        unitNumber = 3;
+        techLabRequired = true;
+    }
+    else if (unitName == "Reaper")
+    {
+        unitNumber = 1;
+    }
+    else if (unitName == "Ghost")
+    {
+        unitNumber = 2;
+        techLabRequired = true;
+    }
+    else
+    {
+        return -1;
+    }
+
+    // TODO: check if can build unit
+
+    i = 0;
+    for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+        if (techLabRequired && UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) != "BarracksTechLab") {
+            continue;
+        }
+        if (UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == "BarracksReactor") {
+            reactorBonus = 1;
+        } else {
+            reactorBonus = 0;
+        }
+        if (UnitQueueGetProperty(gAnyBotStructures_BarracksList[i].mUnit, c_unitQueuePropertyUsed) <= lowestUsed && UnitQueueGetProperty(gAnyBotStructures_BarracksList[i].mUnit, c_unitQueuePropertyUsed) < 1+reactorBonus && !UnitTestState(gAnyBotStructures_BarracksList[i].mUnit, c_unitStateUnderConstruction)) {
+            lowestUsed = UnitQueueGetProperty(gAnyBotStructures_BarracksList[i].mUnit, c_unitQueuePropertyUsed);
+            lowestBarracks = i;
+        }
+    }
+
+    if (lowestUsed == 3) {
+        return -1;
+    }
+
+    return lowestBarracks;
+}
+
+bool PurchasingBuyRefinery() {
+    int i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_ExpansionAtBase[i] && gAnyBotBases_RefineriesAtBase[i] < 2) {
+            WorkersBuildItem("Refinery", i+1);
+            return true;
+        }
+    }
+    return false;
+}
+
+void PurchasingBuyUnitAtBarracks(int barracksNumber, string unitName)
+{
+    int unitNumber;
+    if (unitName == "Marine")
+    {
+        unitNumber = 0;
+    }
+    else if (unitName == "Marauder")
+    {
+        unitNumber = 3;
+    }
+    else if (unitName == "Reaper")
+    {
+        unitNumber = 1;
+    }
+    else if (unitName == "Ghost")
+    {
+        unitNumber = 2;
+    }
+    else
+    {
+        return;
+    }
+    UnitIssueOrder(gAnyBotStructures_BarracksList[barracksNumber].mUnit, Order(AbilityCommand("BarracksTrain", unitNumber)), c_orderQueueAddToEnd);
+}
+
+int PurchasingCanBuyUnitAtLowestFactory(string unitName) {
+    int i = 0;
+    int lowestUsed = 3;
+    int lowestBarracks;
+    int unitNumber;
+    bool requiresTechLab = false;
+    int reactorBonus = 0;
+    if (unitName == "SiegeTank")
+    {
+        unitNumber = 1;
+        requiresTechLab = true;
+    }
+    else if (unitName == "Thor")
+    {
+        unitNumber = 4;
+        requiresTechLab = true;
+    }
+    else if (unitName == "Hellion")
+    {
+        unitNumber = 5;
+    }
+    else if (unitName == "Hellbat") {
+        unitNumber = 6;
+        // Requires Armory - we don't have that yet
+    }
+    else if (unitName == "Cyclone")
+    {
+        unitNumber = 7;
+        requiresTechLab = true;
+    }
+    else
+    {
+        return -1;
+    }
+
+    i = 0;
+    for (; i < gAnyBotStructures_FactoryCount; i += 1) {
+        if (requiresTechLab && UnitGetType(UnitAddOnChild(gAnyBotStructures_FactoryList[i].mUnit, 0)) != "FactoryTechLab") {
+            continue;
+        }
+        if (UnitGetType(UnitAddOnChild(gAnyBotStructures_FactoryList[i].mUnit, 0)) == "FactoryReactor") {
+            reactorBonus = 1;
+        } else {
+            reactorBonus = 0;
+        }
+        if (UnitQueueGetProperty(gAnyBotStructures_FactoryList[i].mUnit, c_unitQueuePropertyUsed) <= lowestUsed && UnitQueueGetProperty(gAnyBotStructures_FactoryList[i].mUnit, c_unitQueuePropertyUsed) < 1+reactorBonus && !UnitTestState(gAnyBotStructures_FactoryList[i].mUnit, c_unitStateUnderConstruction)) {
+            // TODO: Determine if unit has a tech lab if needed
+            lowestUsed = UnitQueueGetProperty(gAnyBotStructures_FactoryList[i].mUnit, c_unitQueuePropertyUsed);
+            lowestBarracks = i;
+        }
+    }
+
+    if (lowestUsed == 3) {
+        return -1;
+    }
+
+    return lowestBarracks;
+}
+
+void PurchasingBuyUnitAtFactory(int barracksNumber, string unitName) {
+    int unitNumber;
+    if (unitName == "SiegeTank")
+    {
+        unitNumber = 1;
+    }
+    else if (unitName == "Thor")
+    {
+        unitNumber = 4;
+    }
+    else if (unitName == "Hellion")
+    {
+        unitNumber = 5;
+    }
+    else if (unitName == "Hellbat") {
+        unitNumber = 6;
+    }
+    else if (unitName == "Cyclone")
+    {
+        unitNumber = 7;
+    }
+    else
+    {
+        return;
+    }
+    UnitIssueOrder(gAnyBotStructures_FactoryList[barracksNumber].mUnit, Order(AbilityCommand("FactoryTrain", unitNumber)), c_orderQueueAddToEnd);
+}
+
+int PurchasingCanBuyUnitAtLowestStarport(string unitName) {
+    int i = 0;
+    int lowestUsed = 3;
+    int lowestBarracks;
+    int unitNumber;
+    bool requiresTechLab = false;
+    int reactorBonus = 0;
+    if (unitName == "Banshee")
+    {
+        unitNumber = 1;
+        requiresTechLab = true;
+    }
+    else if (unitName == "Medivac")
+    {
+        unitNumber = 0;
+    }
+    else if (unitName == "Raven")
+    {
+        unitNumber = 2;
+    }
+    else if (unitName == "Battlecruiser")
+    {
+        unitNumber = 3;
+        requiresTechLab = true;
+    }
+    else if (unitName == "Viking")
+    {
+        unitNumber = 4;
+    }
+    else if (unitName == "Liberator")
+    {
+        unitNumber = 6;
+    }
+    else
+    {
+        return -1;
+    }
+
+    i = 0;
+    for (; i < gAnyBotStructures_StarportCount; i += 1) {
+        if (requiresTechLab && UnitGetType(UnitAddOnChild(gAnyBotStructures_StarportList[i].mUnit, 0)) != "StarportTechLab") {
+            continue;
+        }
+        if (UnitGetType(UnitAddOnChild(gAnyBotStructures_StarportList[i].mUnit, 0)) == "StarportReactor") {
+            reactorBonus = 1;
+        } else {
+            reactorBonus = 0;
+        }
+        if (UnitQueueGetProperty(gAnyBotStructures_StarportList[i].mUnit, c_unitQueuePropertyUsed) <= lowestUsed && UnitQueueGetProperty(gAnyBotStructures_StarportList[i].mUnit, c_unitQueuePropertyUsed) < 1+reactorBonus && !UnitTestState(gAnyBotStructures_StarportList[i].mUnit, c_unitStateUnderConstruction)) {
+            // TODO: Determine if unit has a tech lab if needed
+            lowestUsed = UnitQueueGetProperty(gAnyBotStructures_StarportList[i].mUnit, c_unitQueuePropertyUsed);
+            lowestBarracks = i;
+        }
+    }
+
+    if (lowestUsed == 3) {
+        return -1;
+    }
+
+    return lowestBarracks;
+}
+
+void PurchasingBuyUnitAtStarport(int barracksNumber, string unitName) {
+    int unitNumber;
+    if (unitName == "Banshee")
+    {
+        unitNumber = 1;
+    }
+    else if (unitName == "Medivac")
+    {
+        unitNumber = 0;
+    }
+    else if (unitName == "Raven")
+    {
+        unitNumber = 2;
+    }
+    else if (unitName == "Battlecruiser")
+    {
+        unitNumber = 3;
+    }
+    else if (unitName == "Viking")
+    {
+        unitNumber = 4;
+    }
+    else if (unitName == "Liberator")
+    {
+        unitNumber = 6;
+    }
+    else
+    {
+        return;
+    }
+    UnitIssueOrder(gAnyBotStructures_StarportList[barracksNumber].mUnit, Order(AbilityCommand("StarportTrain", unitNumber)), c_orderQueueAddToEnd);
+}
+
+bool PurchasingBuildReactorAtFactory() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    point p;
+    int tries = 0;
+    for (; i < gAnyBotStructures_FactoryCount; i += 1) {
+        if (UnitTestState(gAnyBotStructures_FactoryList[i].mUnit, c_unitStateUnderConstruction) || UnitGetType(UnitAddOnChild(gAnyBotStructures_FactoryList[i].mUnit, 0)) == "FactoryReactor" || UnitGetType(UnitAddOnChild(gAnyBotStructures_FactoryList[i].mUnit, 0)) == "FactoryTechLab" || UnitQueueGetProperty(gAnyBotStructures_FactoryList[i].mUnit, c_unitQueuePropertyUsed) > 1) {
+            continue;
+        } else {
+            availableFactory = gAnyBotStructures_FactoryList[i].mUnit;
+            break;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        while (p == null && tries < 20) {
+            tries += 1;
+            p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        }
+        if (p == null) {
+            return false;
+        } else {
+            UnitIssueOrder(availableFactory, OrderTargetingPoint(AbilityCommand("FactoryAddOns", 1), p), c_orderQueueReplace);
+            //gAnyBotStructures_FactoryReactors += 1;
+            return true;
+        }
+    }
+}
+
+bool PurchasingBuildTechLabAtFactory() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    point p;
+    int tries = 0;
+    for (; i < gAnyBotStructures_FactoryCount; i += 1) {
+        if (UnitTestState(gAnyBotStructures_FactoryList[i].mUnit, c_unitStateUnderConstruction) || UnitGetType(UnitAddOnChild(gAnyBotStructures_FactoryList[i].mUnit, 0)) == "FactoryReactor" || UnitGetType(UnitAddOnChild(gAnyBotStructures_FactoryList[i].mUnit, 0)) == "FactoryTechLab" || UnitQueueGetProperty(gAnyBotStructures_FactoryList[i].mUnit, c_unitQueuePropertyUsed) > 1) {
+            continue;
+        } else {
+            availableFactory = gAnyBotStructures_FactoryList[i].mUnit;
+            break;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        while (p == null && tries < 20) {
+            tries += 1;
+            p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        }
+        if (p == null) {
+            return false;
+        } else {
+            UnitIssueOrder(availableFactory, OrderTargetingPoint(AbilityCommand("FactoryAddOns", 0), p), c_orderQueueReplace);
+            //gAnyBotStructures_FactoryTechLabs += 1;
+            return true;
+        }
+    }
+}
+
+bool PurchasingBuildReactorAtStarport() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    point p;
+    int tries = 0;
+    for (; i < gAnyBotStructures_StarportCount; i += 1) {
+        if (UnitTestState(gAnyBotStructures_StarportList[i].mUnit, c_unitStateUnderConstruction) || UnitGetType(UnitAddOnChild(gAnyBotStructures_StarportList[i].mUnit, 0)) == "StarportReactor" || UnitGetType(UnitAddOnChild(gAnyBotStructures_StarportList[i].mUnit, 0)) == "StarportTechLab" || UnitQueueGetProperty(gAnyBotStructures_StarportList[i].mUnit, c_unitQueuePropertyUsed) > 1) {
+            continue;
+        } else {
+            availableFactory = gAnyBotStructures_StarportList[i].mUnit;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        while (p == null && tries < 20) {
+            tries += 1;
+            p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        }
+        if (p == null) {
+            return false;
+        } else {
+            UnitIssueOrder(availableFactory, OrderTargetingPoint(AbilityCommand("StarportAddOns", 1), p), c_orderQueueReplace);
+            //gAnyBotStructures_StarportReactors += 1;
+            return true;
+        }
+    }
+}
+
+bool PurchasingBuildTechLabAtStarport() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    point p;
+    int tries = 0;
+    for (; i < gAnyBotStructures_StarportCount; i += 1) {
+        if (UnitTestState(gAnyBotStructures_StarportList[i].mUnit, c_unitStateUnderConstruction) || UnitGetType(UnitAddOnChild(gAnyBotStructures_StarportList[i].mUnit, 0)) == "StarportReactor" || UnitGetType(UnitAddOnChild(gAnyBotStructures_StarportList[i].mUnit, 0)) == "StarportTechLab" || UnitQueueGetProperty(gAnyBotStructures_StarportList[i].mUnit, c_unitQueuePropertyUsed) > 1) {
+            continue;
+        } else {
+            availableFactory = gAnyBotStructures_StarportList[i].mUnit;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        while (p == null && tries < 20) {
+            tries += 1;
+            p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        }
+        if (p == null) {
+            return false;
+        } else {
+            UnitIssueOrder(availableFactory, OrderTargetingPoint(AbilityCommand("StarportAddOns", 0), p), c_orderQueueReplace);
+            //gAnyBotStructures_StarportTechLabs += 1;
+            return true;
+        }
+    }
+}
+
+bool PurchasingBuildReactorAtBarracks() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    point p;
+    int tries = 0;
+    for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+        if (UnitTestState(gAnyBotStructures_BarracksList[i].mUnit, c_unitStateUnderConstruction) || UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == "BarracksReactor" || UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == "BarracksTechLab" || UnitQueueGetProperty(gAnyBotStructures_BarracksList[i].mUnit, c_unitQueuePropertyUsed) > 1) {
+            continue;
+        } else {
+            availableFactory = gAnyBotStructures_BarracksList[i].mUnit;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        while (p == null && tries < 20) {
+            tries += 1;
+            p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        }
+        if (p == null) {
+            return false;
+        } else {
+            UnitIssueOrder(availableFactory, OrderTargetingPoint(AbilityCommand("BarracksAddOns", 1), p), c_orderQueueReplace);
+            //gAnyBotStructures_BarracksReactors += 1;
+            return true;
+        }
+    }
+}
+
+bool PurchasingBuildTechLabAtBarracks() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    point p;
+    int tries = 0;
+    if (gAnyBotStructures_BarracksCount == 0) {
+        return false;
+    }
+    for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+        if (UnitTestState(gAnyBotStructures_BarracksList[i].mUnit, c_unitStateUnderConstruction) || UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == "BarracksReactor" || UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == "BarracksTechLab" || UnitQueueGetProperty(gAnyBotStructures_BarracksList[i].mUnit, c_unitQueuePropertyUsed) > 1) {
+            continue;
+        } else {
+            availableFactory = gAnyBotStructures_BarracksList[i].mUnit;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        while (p == null && tries < 20) {
+            tries += 1;
+            p = UnitTypePlacementFromPoint("CommandCenter", gGeneral_AnyBotTeamNumber, RegionRandomPoint(RegionFromName("AddonArea")), 1000);
+        }
+        if (p == null) {
+            return false;
+        } else {
+
+            UnitIssueOrder(availableFactory, OrderTargetingPoint(AbilityCommand("BarracksAddOns", 0), p), c_orderQueueReplace);
+            //gAnyBotStructures_BarracksReactors += 1;
+            return true;
+        }
+    }
+}
+
+bool PurchasingResearchStimPack() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+        if (!UnitTestState(gAnyBotStructures_BarracksList[i].mUnit, c_unitStateUnderConstruction) && UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == "BarracksTechLab" && !UnitTestState(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0), c_unitStateUnderConstruction) && UnitOrderCount(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == 0) {
+            availableFactory = UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0);
+        } else {
+            continue;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        UnitIssueOrder(availableFactory, Order(AbilityCommand("BarracksTechLabResearch", 0)), c_orderQueueReplace);
+        return true;
+    }
+}
+
+bool PurchasingResearchCombatShield() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+        if (!UnitTestState(gAnyBotStructures_BarracksList[i].mUnit, c_unitStateUnderConstruction) && UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == "BarracksTechLab" && !UnitTestState(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0), c_unitStateUnderConstruction) && UnitOrderCount(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == 0) {
+            availableFactory = UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0);
+        } else {
+            continue;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        UnitIssueOrder(availableFactory, Order(AbilityCommand("BarracksTechLabResearch", 1)), c_orderQueueReplace);
+        return true;
+    }
+}
+
+bool PurchasingResearchConcussiveShells() {
+    unit availableFactory = gAnyBotStructures_CommandCenterList[0].mUnit;
+    int i = 0;
+    for (; i < gAnyBotStructures_BarracksCount; i += 1) {
+        if (!UnitTestState(gAnyBotStructures_BarracksList[i].mUnit, c_unitStateUnderConstruction) && UnitGetType(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == "BarracksTechLab" && !UnitTestState(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0), c_unitStateUnderConstruction) && UnitOrderCount(UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0)) == 0) {
+            availableFactory = UnitAddOnChild(gAnyBotStructures_BarracksList[i].mUnit, 0);
+        } else {
+            continue;
+        }
+    }
+
+    if (availableFactory == gAnyBotStructures_CommandCenterList[0].mUnit) {
+        return false;
+    } else {
+        UnitIssueOrder(availableFactory, Order(AbilityCommand("BarracksTechLabResearch", 2)), c_orderQueueReplace);
+        return true;
+    }
+}
+
+bool PurchasingResetAddOn(bool checkConds, bool runActions) {
+    gAnyBotPurchasing_BuildingAddOn = false;
+    return true;
+}
+
+string PurchasingBuildArmyUnit(int currentMinerals, int currentVespene, bool underAttack) {
+    int lowestUnit = -1;
+    // INFO: Counters
+    //// Zergling -> Hellion
+    //// Roach -> SiegeTank, Marauder
+    //// Hydralisk -> SiegeTank, Hellion
+    //// Mutalisk -> Thor
+    //// Lurker -> Thor, Marine (Micro intensive)
+    //// Infestor -> SiegeTank, Ghost
+    //// Ultralisk -> Banshee, Thor, Marauder
+    //// Baneling -> SiegeTank
+    //// BroodLord -> Viking
+
+	int probability = 0;
+    int [8] unitProb;
+    int [8] unitTrue; //Add a count each time a unit appears as a possible counter
+    int unitToBuild = 0;
+    int rand;
+	int i;
+	int sum;
+
+	for(i = 0; i < 8; i = i + 1) {
+		unitTrue[i] = 0;
+	}
+
+    // Here we set up the weight of each type of unit. If the unit counters a building we have observed, then these weights will be added together for the randomization function
+    //0: Marine
+	unitProb[0] = 150;
+	unitTrue[0] = unitTrue[0] + 1;
+	probability = probability + 100; //Default
+    //1: Marauder
+	unitProb[1] = 75;
+    //2: Reaper
+	unitProb[2] = 25;
+	//3: Hellion
+	unitProb[3] = 50;
+	//4: SiegeTank
+	unitProb[4] = 50;
+	//5: Thor
+	unitProb[5] = 100;
+	//6: Banshee
+	unitProb[6] = 50;
+	//7: Viking
+	unitProb[7] = 100;
+
+
+    if(gEnemyArmy_BanelingNestCount > 0) {
+        probability = probability + unitProb[4];
+		unitTrue[4] = unitTrue[4] + 1;
+    }
+	if(gEnemyArmy_GreaterSpireCount > 0) {
+		probability = probability + unitProb[7];
+		unitTrue[7] = unitTrue[7] + 1;
+	}
+	if(gEnemyArmy_HydraliskDenCount > 0) {
+		probability = probability + unitProb[4];
+		unitTrue[4] = unitTrue[4] + 1;
+		probability = probability + unitProb[3];
+		unitTrue[3] = unitTrue[3] + 1;
+	}
+	if(gEnemyArmy_InfestationPitCount > 0) {
+		probability = probability + unitProb[4];
+		unitTrue[4] = unitTrue[4] + 1;
+	}
+	if(gEnemyArmy_LurkerDenCount > 0) {
+		probability = probability + unitProb[5];
+		unitTrue[5] = unitTrue[5] + 1;
+	}
+	if(gEnemyArmy_RoachWarrenCount > 0) {
+		probability = probability + unitProb[1];
+		unitTrue[1] = unitTrue[1] + 1;
+		probability = probability + unitProb[4];
+		unitTrue[4] = unitTrue[4] + 1;
+	}
+	if(gEnemyArmy_SpawningPoolCount > 0) {
+		probability = probability + unitProb[3];
+		unitTrue[3] = unitTrue[3] + 1;
+	}
+	if(gEnemyArmy_SpireCount > 0 ){
+		probability = probability + unitProb[0];
+		unitTrue[0] = unitTrue[0] + 1;
+		probability = probability + unitProb[5];
+		unitTrue[5] = unitTrue[5] + 1;
+	}
+	if(gEnemyArmy_UltraliskCavernCount > 0) {
+		probability = probability + unitProb[5];
+		unitTrue[5] = unitTrue[5] + 1;
+		probability = probability + unitProb[1];
+		unitTrue[1] = unitTrue[1] + 1;
+		probability = probability + unitProb[6];
+		unitTrue[6] = unitTrue[6] + 1;
+	}
+
+    //Setting stuff to true
+    //Putting only true in onlyTrue
+
+    rand = RandomInt(0, probability - 1);
+    sum = 0;
+    for(i = 0; i < 8; i = i + 1) {
+        if(unitTrue[i] > 0){
+            sum = sum + (unitProb[i] * unitTrue[i]);
+            if(rand < sum) {
+                unitToBuild = i;
+				break;
+            }
+        }
+    }
+
+
+
+
+    // TODO: BUILD ARMY UNIT LOGIC
+	if(unitToBuild == 0) {
+		if (currentMinerals >= 50) {
+			// Buy Marine
+			lowestUnit = PurchasingCanBuyUnitAtLowestBarracks("Marine");
+			if (lowestUnit != -1) {
+				PurchasingBuyUnitAtBarracks(lowestUnit, "Marine");
+				return "Marine";
+			}
+		}
+	} else if (unitToBuild == 1) {
+		if (currentMinerals >= 100 && currentVespene >= 25) {
+			// Buy Marauder
+			lowestUnit = PurchasingCanBuyUnitAtLowestBarracks("Marauder");
+			if (lowestUnit != -1) {
+				PurchasingBuyUnitAtBarracks(lowestUnit, "Marauder");
+				return "Marauder";
+			}
+		}
+	} else if (unitToBuild == 2) {
+		if (currentMinerals >= 50 && currentVespene >= 50) {
+			// Buy Reaper
+			lowestUnit = PurchasingCanBuyUnitAtLowestBarracks("Reaper");
+			if (lowestUnit != -1) {
+				PurchasingBuyUnitAtBarracks(lowestUnit, "Reaper");
+				return "Reaper";
+			}
+		}
+	} else if (unitToBuild == 3) {
+		if (currentMinerals >= 100) {
+			// Buy Hellion
+			lowestUnit = PurchasingCanBuyUnitAtLowestFactory("Hellion");
+			if (lowestUnit != -1) {
+				PurchasingBuyUnitAtFactory(lowestUnit, "Hellion");
+				return "Hellion";
+			}
+		}
+	} else if (unitToBuild == 4) {
+		if (currentMinerals >= 150 && currentVespene >= 125) {
+			// Buy Siege Tank
+			lowestUnit = PurchasingCanBuyUnitAtLowestFactory("SiegeTank");
+			if (lowestUnit != -1) {
+				PurchasingBuyUnitAtFactory(lowestUnit, "SiegeTank");
+				return "SiegeTank";
+			}
+		}
+	} else if (unitToBuild == 5) {
+		if (currentMinerals >= 300 && currentVespene >= 200) {
+			// Buy Thor
+			lowestUnit = PurchasingCanBuyUnitAtLowestFactory("Thor");
+			if (lowestUnit != -1) {
+				PurchasingBuyUnitAtFactory(lowestUnit, "Thor");
+				return "Thor";
+			}
+		}
+	} else if (unitToBuild == 6) {
+		if (currentMinerals >= 150 && currentVespene >= 100) {
+			// Buy Banshee
+			lowestUnit = PurchasingCanBuyUnitAtLowestFactory("Banshee");
+			if (lowestUnit != -1) {
+				PurchasingBuyUnitAtFactory(lowestUnit, "Banshee");
+				return "Banshee";
+			}
+		}
+	} else if (unitToBuild == 7) {
+		if (currentMinerals >= 150 && currentVespene >= 75) {
+			// Buy Viking
+			lowestUnit = PurchasingCanBuyUnitAtLowestFactory("Viking");
+			if (lowestUnit != -1) {
+				PurchasingBuyUnitAtFactory(lowestUnit, "Viking");
+				return "Viking";
+			}
+		}
+	}
+
+    return "None";
+}
+
+bool PurchasingTick(bool checkConds, bool runActions) {
+    int mineralCount = PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropMinerals);
+    int vespeneCount = PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropVespene);
+    bool shouldExpand = ExpansionReadyToExpand() && !gAnyBotBases_BuildingExpansion; // TODO: Convert this into a global variable
+    bool supplyBlocked = !gAnyBotBases_BuildingSupplyDepot && PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropSuppliesUsed) + 12 >= PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropSuppliesMade) && PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropSuppliesMade) < 200;
+    bool underAttack = false; // TODO: Convert this into a global variable
+    string unitBuilt = "None";
+    string unitDoingBuilding = "None";
+    int mineralBeingUsed = 0;
+    int vespeneBeingUsed = 0;
+    int unitDoingBuildingIndex = -1;
+    int lowestBase = -1;
+    bool researchAvailable = false; // TODO: Convert this into a global variable
+    int i = 0;
+    trigger t;
+
+    if (SkillCheckCheck()) {
+        DebugLog("Failed skill check - decreasing purchase options.", "SkillCheck");
+        mineralCount = FixedToInt(mineralCount * 0.5);
+        vespeneCount = FixedToInt(vespeneCount * 0.5);
+    }
+
+    i = 0;
+    for (; i < gGeneral_MaxBases; i += 1) {
+        if (gAnyBotBases_UnderAttack[i]) {
+            underAttack = true;
+            break;
+        }
+    }
+
+    // First we should handle our pressing concerns
+
+    if (supplyBlocked && mineralCount >= 100) {
+        DebugLog("SupplyBlocked and building", "Purchasing");
+        WorkersBuildItem("SupplyDepot", 1);
+        mineralCount -= 100;
+    } else if (supplyBlocked) {
+        mineralCount -= 75;
+    }
+
+    if (mineralCount <= 0) {
+        return true;
+    }
+
+    if (shouldExpand && mineralCount >= 400) {
+        WorkersBuildItem("CommandCenter", 1);
+        mineralCount -= 400;
+    } else if (shouldExpand) {
+        mineralCount -= 250;
+    }
+
+    if (mineralCount <= 0) {
+        return true;
+    }
+
+    if (underAttack) {
+        unitBuilt = PurchasingBuildArmyUnit(mineralCount, vespeneCount, underAttack);
+        if (unitBuilt == "Marine") {
+            mineralCount -= 50;
+        } else if (unitBuilt == "Marauder") {
+            mineralCount -= 100;
+            vespeneCount -= 25;
+        } else if (unitBuilt == "Reaper") {
+            mineralCount -= 50;
+            vespeneCount -= 50;
+        } else if (unitBuilt == "Ghost") {
+            mineralCount -= 200;
+            vespeneCount -= 100;
+        } else if (unitBuilt == "Hellion") {
+            mineralCount -= 100;
+        } else if (unitBuilt == "HellionTank") {
+            // Hellbat
+            mineralCount -= 100;
+        } else if (unitBuilt == "WidowMine") {
+            mineralCount -= 75;
+            vespeneCount -= 25;
+        } else if (unitBuilt == "SiegeTank") {
+            mineralCount -= 150;
+            vespeneCount -= 125;
+        } else if (unitBuilt == "Thor") {
+            mineralCount -= 300;
+            vespeneCount -= 200;
+        } else if (unitBuilt == "VikingAssault" || unitBuilt == "VikingFighter") {
+            mineralCount -= 150;
+            vespeneCount -= 75;
+        } else if (unitBuilt == "Medivac") {
+            mineralCount -= 100;
+            vespeneCount -= 100;
+        } else if (unitBuilt == "Banshee") {
+            mineralCount -= 150;
+            vespeneCount -= 100;
+        } else if (unitBuilt == "Raven") {
+            mineralCount -= 100;
+            vespeneCount -= 200;
+        } else if (unitBuilt == "Battlecruiser") {
+            mineralCount -= 400;
+            mineralCount -= 300;
+        }
+    }
+
+    if (mineralCount <= 0) {
+        return true;
+    }
+
+    // Now we are past the pressing concerns
+
+    if (gAnyBotPurchasing_BuildOrderCurrentIndex < gAnyBotPurchasing_BuildOrderLength) {
+        // We have an item in our build order
+        unitBuilt = gAnyBotPurchasing_BuildOrder[gAnyBotPurchasing_BuildOrderCurrentIndex].unitName;
+        // Have we reached the designated supply count?
+        if (gAnyBotPurchasing_BuildOrder[gAnyBotPurchasing_BuildOrderCurrentIndex].supply <= PlayerGetPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropSuppliesUsed)) {
+            // We have reached the required supply count and can continue with the item
+            if (unitBuilt == "Marine") {
+                unitDoingBuilding = "Barracks";
+                mineralBeingUsed = 50;
+            } else if (unitBuilt == "Marauder") {
+                unitDoingBuilding = "Barracks";
+                mineralBeingUsed = 100;
+                vespeneBeingUsed = 25;
+            } else if (unitBuilt == "Reaper") {
+                unitDoingBuilding = "Barracks";
+                mineralBeingUsed = 50;
+                vespeneBeingUsed = 50;
+            } else if (unitBuilt == "Ghost") {
+                unitDoingBuilding = "Barracks";
+                mineralBeingUsed = 200;
+                vespeneBeingUsed = 100;
+            } else if (unitBuilt == "Hellion") {
+                unitDoingBuilding = "Factory";
+                mineralBeingUsed = 100;
+            } else if (unitBuilt == "HellionTank") {
+                // Hellbat
+                unitDoingBuilding = "Factory";
+                mineralBeingUsed = 100;
+            } else if (unitBuilt == "WidowMine") {
+                unitDoingBuilding = "Factory";
+                mineralBeingUsed = 75;
+                vespeneBeingUsed = 25;
+            } else if (unitBuilt == "SiegeTank") {
+                unitDoingBuilding = "Factory";
+                mineralBeingUsed = 150;
+                vespeneBeingUsed = 125;
+            } else if (unitBuilt == "Thor") {
+                unitDoingBuilding = "Factory";
+                mineralBeingUsed = 300;
+                vespeneBeingUsed = 200;
+            } else if (unitBuilt == "VikingAssault" || unitBuilt == "VikingFighter") {
+                unitDoingBuilding = "Starport";
+                mineralBeingUsed = 150;
+                vespeneBeingUsed = 75;
+            } else if (unitBuilt == "Medivac") {
+                unitDoingBuilding = "Starport";
+                mineralBeingUsed = 100;
+                vespeneBeingUsed = 100;
+            } else if (unitBuilt == "Banshee") {
+                unitDoingBuilding = "Starport";
+                mineralBeingUsed = 150;
+                vespeneBeingUsed = 100;
+            } else if (unitBuilt == "Raven") {
+                unitDoingBuilding = "Starport";
+                mineralBeingUsed = 100;
+                vespeneBeingUsed = 200;
+            } else if (unitBuilt == "Battlecruiser") {
+                unitDoingBuilding = "Starport";
+                mineralBeingUsed = 400;
+                vespeneBeingUsed = 300;
+            } else if (unitBuilt == "CommandCenter") {
+                unitDoingBuilding = "SCV";
+                mineralBeingUsed = 400;
+            } else if (unitBuilt == "OrbitalCommand") {
+                unitDoingBuilding = "CommandCenter";
+                mineralBeingUsed = 150;
+            } else if (unitBuilt == "SupplyDepot") {
+                unitDoingBuilding = "SCV";
+                mineralBeingUsed = 100;
+            } else if (unitBuilt == "Refinery") {
+                unitDoingBuilding = "SCV";
+                mineralBeingUsed = 75;
+            } else if (unitBuilt == "Barracks") {
+                unitDoingBuilding = "SCV";
+                mineralBeingUsed = 150;
+            } else if (unitBuilt == "EngineeringBay") {
+                unitDoingBuilding = "SCV";
+                mineralBeingUsed = 125;
+            } else if (unitBuilt == "Factory") {
+                unitDoingBuilding = "SCV";
+                mineralBeingUsed = 150;
+                vespeneBeingUsed = 100;
+            } else if (unitBuilt == "Armory") {
+                unitDoingBuilding = "SCV";
+                mineralBeingUsed = 150;
+                vespeneBeingUsed = 100;
+            } else if (unitBuilt == "Starport") {
+                unitDoingBuilding = "SCV";
+                mineralBeingUsed = 150;
+                vespeneBeingUsed = 100;
+            } else if (unitBuilt == "BarracksTechLab") {
+                unitDoingBuilding = "Barracks";
+                mineralBeingUsed = 50;
+                vespeneBeingUsed = 50;
+            } else if (unitBuilt == "BarracksReactor") {
+                unitDoingBuilding = "Barracks";
+                mineralBeingUsed = 50;
+                vespeneBeingUsed = 50;
+            } else if (unitBuilt == "FactoryTechLab") {
+                unitDoingBuilding = "Factory";
+                mineralBeingUsed = 50;
+                vespeneBeingUsed = 25;
+            } else if (unitBuilt == "FactoryReactor") {
+                unitDoingBuilding = "Factory";
+                mineralBeingUsed = 50;
+                vespeneBeingUsed = 25;
+            } else if (unitBuilt == "StarportTechLab") {
+                unitDoingBuilding = "Starport";
+                mineralBeingUsed = 50;
+                vespeneBeingUsed = 25;
+            } else if (unitBuilt == "StarportReactor") {
+                unitDoingBuilding = "Starport";
+                mineralBeingUsed = 50;
+                vespeneBeingUsed = 25;
+            }
+
+            // We now know the costs of our items and what structure must build it
+            if (unitBuilt == "CommandCenter" && (gAnyBotBases_BuildingExpansion || gAnyBotBases_ExpansionAtBase[1])) {
+                // We are trying to build a command center, but our first expansion is already built so we should skip it
+                gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+            } else if (vespeneBeingUsed <= vespeneCount && mineralBeingUsed <= mineralCount) {
+                // We have the necessary resources, buy the item
+                if (unitDoingBuilding == "SCV") {
+                    lowestBase = PurchasingLowestBaseForItem(unitBuilt);
+                    // TEMP
+                    if (lowestBase == 0) {
+                        lowestBase = 1;
+                    }
+                    // END TEMP
+                    if (unitBuilt == "Refinery" && gAnyBotStructures_RefineryCount <= 1.5*gAnyBotStructures_CommandCenterCount) {
+                        if (WorkersBuildItem(unitBuilt, lowestBase)) {
+                            // We successfuly built the item
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                        } else {
+                            // We failed to build the item
+                            mineralCount -= FixedToInt(0.75*IntToFixed(mineralBeingUsed));
+                            vespeneCount -= FixedToInt(0.75*IntToFixed(vespeneBeingUsed));
+                        }
+                    } else {
+                        // We have no need of building this refinery, skip it
+                        gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                    }
+                } else if (unitDoingBuilding == "Barracks") {
+                    if (unitBuilt == "BarracksTechLab") {
+                        if (PurchasingBuildTechLabAtBarracks()) {
+                            gAnyBotPurchasing_BuildingAddOn = true;
+                            t = TriggerCreate("PurchasingResetAddOn");
+                            TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                            return true;
+                        }
+                    } else if (unitBuilt == "BarracksReactor") {
+                        if (PurchasingBuildReactorAtBarracks()) {
+                            gAnyBotPurchasing_BuildingAddOn = true;
+                            t = TriggerCreate("PurchasingResetAddOn");
+                            TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                            return true;
+                        }
+                    } else {
+                        unitDoingBuildingIndex = PurchasingCanBuyUnitAtLowestBarracks(unitBuilt);
+                        if (unitDoingBuildingIndex != -1) {
+                            PurchasingBuyUnitAtBarracks(unitDoingBuildingIndex, unitBuilt);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                        } else {
+                            // We can't currently buy this, so handle appropriately
+                            mineralCount -= FixedToInt(0.75*IntToFixed(mineralBeingUsed));
+                            vespeneCount -= FixedToInt(0.75*IntToFixed(vespeneBeingUsed));
+                        }
+                    }
+                } else if (unitDoingBuilding == "BarracksTechLab") {
+                    // TODO: Build items pertaining to a barracks tech lab (research)
+                } else if (unitDoingBuilding == "Factory") {
+                    // TODO: Build items pertaining to a Factory
+                    if (unitBuilt == "FactoryTechLab") {
+                        if (PurchasingBuildTechLabAtFactory()) {
+                            gAnyBotPurchasing_BuildingAddOn = true;
+                            t = TriggerCreate("PurchasingResetAddOn");
+                            TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                            return true;
+                        }
+                    } else if (unitBuilt == "FactoryReactor") {
+                        if (PurchasingBuildReactorAtFactory()) {
+                            gAnyBotPurchasing_BuildingAddOn = true;
+                            t = TriggerCreate("PurchasingResetAddOn");
+                            TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                            return true;
+                        }
+                    } else {
+                        unitDoingBuildingIndex = PurchasingCanBuyUnitAtLowestFactory(unitBuilt);
+                        if (unitDoingBuildingIndex != -1) {
+                            PurchasingBuyUnitAtFactory(unitDoingBuildingIndex, unitBuilt);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                        } else {
+                            // We can't currently buy this, so handle appropriately
+                            mineralCount -= FixedToInt(0.75*IntToFixed(mineralBeingUsed));
+                            vespeneCount -= FixedToInt(0.75*IntToFixed(vespeneBeingUsed));
+                        }
+                    }
+                } else if (unitDoingBuilding == "Starport") {
+                    // TODO: Build items pertaining to a starport
+                    if (unitBuilt == "StarportTechLab") {
+                        if (PurchasingBuildTechLabAtStarport()) {
+                            gAnyBotPurchasing_BuildingAddOn = true;
+                            t = TriggerCreate("PurchasingResetAddOn");
+                            TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                            return true;
+                        }
+                    } else if (unitBuilt == "StarportReactor") {
+                        if (PurchasingBuildReactorAtStarport()) {
+                            gAnyBotPurchasing_BuildingAddOn = true;
+                            t = TriggerCreate("PurchasingResetAddOn");
+                            TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                            return true;
+                        }
+                    } else {
+                        unitDoingBuildingIndex = PurchasingCanBuyUnitAtLowestStarport(unitBuilt);
+                        if (unitDoingBuildingIndex != -1) {
+                            PurchasingBuyUnitAtStarport(unitDoingBuildingIndex, unitBuilt);
+                            mineralCount -= mineralBeingUsed;
+                            vespeneCount -= vespeneBeingUsed;
+                            gAnyBotPurchasing_BuildOrderCurrentIndex += 1;
+                        } else {
+                            // We can't currently buy this, so handle appropriately
+                            mineralCount -= FixedToInt(0.75*IntToFixed(mineralBeingUsed));
+                            vespeneCount -= FixedToInt(0.75*IntToFixed(vespeneBeingUsed));
+                        }
+                    }
+                }
+            } else {
+                if (vespeneBeingUsed > vespeneCount) {
+                    // We don't have enough vespene
+                    if (PurchasingBuyRefinery()) {
+                        mineralCount -= 75;
+                    }
+                    vespeneCount -= FixedToInt(0.75*IntToFixed(vespeneBeingUsed));
+                } else {
+                    vespeneCount -= vespeneBeingUsed;
+                }
+
+                // Our vespene troubles are being handled or do not exist, assume they don't exist going forward
+                if (mineralBeingUsed > mineralCount) {
+                    // We don't have enough minerals
+                    mineralCount -= FixedToInt(0.75*IntToFixed(mineralBeingUsed));
+                } else {
+                    mineralCount -= mineralBeingUsed;
+                }
+            }
+        }
+
+        if (mineralCount <= 0) {
+            return true;
+        }
+    }
+
+    // Now we are past our build order
+
+    // If we can build stimpack, do so
+    if (gAnyBotResearch_HaveStimPack == false && gAnyBotResearch_StartedStimPack == false && gAnyBotStructures_BarracksTechLabs > 0 && mineralCount >= 100 && vespeneCount >= 100) {
+        if (PurchasingResearchStimPack()) {
+            mineralCount -= 100;
+            vespeneCount -= 100;
+        } else {
+            //mineralCount -= 50;
+            //vespeneCount -= 50;
+        }
+    } else if (gAnyBotResearch_HaveStimPack && gAnyBotResearch_StartedCombatShield == false && gAnyBotResearch_HaveCombatShield == false && gAnyBotStructures_BarracksTechLabs > 0 && mineralCount >= 100 && vespeneCount >= 100) {
+        if (PurchasingResearchCombatShield()) {
+            mineralCount -= 100;
+            vespeneCount -= 100;
+        } else {
+            //mineralCount -= 50;
+            //vespeneCount -= 50;
+        }
+    }
+
+    if (mineralCount <= 0) {
+        return true;
+    }
+
+    // TODO: Refine logic so that it finds the least saturated base that can build an scv
+
+    // TODO: Replace this logic with the ability to build multiple types of unit-producing structures or research-producing structures
+    // Build add ons if we can
+    if (!gAnyBotPurchasing_BuildingAddOn) {
+        if (mineralCount >= 50 && vespeneCount >= 50) {
+            if (RandomInt(0, 2) == 1) {
+                if (PurchasingBuildReactorAtBarracks()) {
+                    gAnyBotPurchasing_BuildingAddOn = true;
+                    t = TriggerCreate("PurchasingResetAddOn");
+                    TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                    mineralCount -= 50;
+                    vespeneCount -= 50;
+                    return true;
+                }
+            } else if (PurchasingBuildTechLabAtBarracks()) {
+                gAnyBotPurchasing_BuildingAddOn = true;
+                t = TriggerCreate("PurchasingResetAddOn");
+                TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                mineralCount -= 50;
+                vespeneCount -= 50;
+                return true;
+            }
+        }
+    }
+    if (!gAnyBotPurchasing_BuildingAddOn) {
+        if (mineralCount >= 50 && vespeneCount >= 25) {
+            if (RandomInt(0, 2) == 1) {
+                if (PurchasingBuildReactorAtFactory()) {
+                    gAnyBotPurchasing_BuildingAddOn = true;
+                    t = TriggerCreate("PurchasingResetAddOn");
+                    TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                    mineralCount -= 50;
+                    vespeneCount -= 25;
+                    return true;
+                }
+            } else if (PurchasingBuildTechLabAtFactory()) {
+                gAnyBotPurchasing_BuildingAddOn = true;
+                t = TriggerCreate("PurchasingResetAddOn");
+                TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                mineralCount -= 50;
+                vespeneCount -= 25;
+                return true;
+            }
+        }
+    }
+    if (!gAnyBotPurchasing_BuildingAddOn) {
+        if (mineralCount >= 50 && vespeneCount >= 25) {
+            if (RandomInt(0, 2) == 1) {
+                if (PurchasingBuildReactorAtStarport()) {
+                    gAnyBotPurchasing_BuildingAddOn = true;
+                    t = TriggerCreate("PurchasingResetAddOn");
+                    TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                    mineralCount -= 50;
+                    vespeneCount -= 25;
+                    return true;
+                }
+            } else if (PurchasingBuildTechLabAtStarport()) {
+                gAnyBotPurchasing_BuildingAddOn = true;
+                t = TriggerCreate("PurchasingResetAddOn");
+                TriggerAddEventTimeElapsed(t, 25, c_timeGame);
+                mineralCount -= 50;
+                vespeneCount -= 25;
+                return true;
+            }
+        }
+    }
+
+    lowestBase = PurchasingCanBuySCVAtLowestBase();
+    if (lowestBase != -1) {
+        // Our lowest base is able to buy an SCV
+        if (PurchasingLowestBaseUnsaturated()) {
+            // Our lowest base is unsaturated
+            PurchasingBuySCVAtBase(lowestBase);
+            mineralCount -= 50;
+        } else {
+            if (mineralCount >= 150) {
+                PurchasingBuySCVAtBase(lowestBase);
+                mineralCount -= 50;
+            }
+        }
+    } else {
+        // We are not able to buy an SCV at our lowest base
+    }
+
+    PurchasingBuildArmyUnit(mineralCount, vespeneCount, underAttack);
+
+    while (mineralCount > 300) {
+        PurchasingBuildArmyUnit(mineralCount, vespeneCount, underAttack);
+        mineralCount -= 100;
+    }
+
+    // If we have the money left over and could build a barracks, do so
+    if (mineralCount >= 150 && gAnyBotStructures_BarracksCount / 2 <= gAnyBotStructures_FactoryCount && gAnyBotStructures_BarracksCount / 2 <= gAnyBotStructures_StarportCount) {
+        PurchasingBuyBarracksAtLowestBase();
+    } else if (mineralCount >= 150 && vespeneCount >= 100 && gAnyBotStructures_FactoryCount * 2 <= gAnyBotStructures_BarracksCount && gAnyBotStructures_FactoryCount <= gAnyBotStructures_StarportCount) {
+        PurchasingBuyFactoryAtLowestBase();
+    } else if (mineralCount >= 150 && vespeneCount >= 100 && gAnyBotStructures_StarportCount * 2 <= gAnyBotStructures_BarracksCount && gAnyBotStructures_StarportCount <= gAnyBotStructures_FactoryCount) {
+        PurchasingBuyStarportAtLowestBase();
+    }
+
+    return true;
+}
+
+void PurchasingRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("PurchasingTick");
+    TriggerAddEventTimePeriodic(t, 1, c_timeGame);
+}

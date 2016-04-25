@@ -1,0 +1,33 @@
+void OrbitalCommandRegisterTriggers()
+{
+    trigger t = TriggerCreate("OrbitalCommandOnFinished");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("UpgradeToOrbital", 0), c_unitAbilStageComplete, true);
+}
+
+void OrbitalCommandRegisterTriggersOnCreate(unit orbitalCommandUnit)
+{
+    trigger t = TriggerCreate("OrbitalCommandOnEnergyChanged");
+    TriggerAddEventUnitProperty(t, UnitRefFromUnit(orbitalCommandUnit), c_unitPropEnergy);
+}
+
+bool OrbitalCommandOnFinished(bool checkConds, bool runActions)
+{
+    unit orbitalCommandUnit = EventUnit();
+    OrbitalCommandRegisterTriggersOnCreate(orbitalCommandUnit);
+    return true;
+}
+
+bool OrbitalCommandOnEnergyChanged(bool checkConds, bool runActions)
+{
+    unit mineralField;
+    unit orbitalCommandUnit = EventUnit();
+    unitgroup nearestMineralPatch;
+    int orbitalEnergy = UnitGetPropertyInt(orbitalCommandUnit, c_unitPropEnergy, c_unitPropCurrent);
+   
+    if (orbitalEnergy >= libNtve_gf_CostOfAbility("CalldownMULE", "Energy"))
+    {
+        nearestMineralPatch = UnitGroup("MineralField", c_playerAny, RegionEntireMap(), null, 0);
+        UnitIssueOrder(orbitalCommandUnit, OrderTargetingUnit(AbilityCommand("CalldownMULE", 0), UnitGroupClosestToPoint(nearestMineralPatch, UnitGetPosition(orbitalCommandUnit))), c_orderQueueReplace);
+    }
+    return true;
+}

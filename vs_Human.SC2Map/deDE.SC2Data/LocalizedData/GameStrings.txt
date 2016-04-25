@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=Expansionen sind auf dieser Karte leicht einzunehmen. Nutzen Sie diesen Vorteil, um eine große Armee aufzustellen.
+DocInfo/DescShort=1vs1
+DocInfo/Name=Dämmertürme
+MapInfo/Player00/Name=Neutral
+MapInfo/Player01/Name=Spieler 1
+MapInfo/Player02/Name=Spieler 2
+MapInfo/Player03/Name=Feindlich
+MapInfo/Player04/Name=Spieler 4
+MapInfo/Player05/Name=Feindlich

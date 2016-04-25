@@ -1,0 +1,103 @@
+include "TriggerLibs/NativeLib"
+include "scripts/blackboard"
+include "scripts/debug"
+include "scripts/skillcheck"
+include "scripts/utils"
+include "scripts/travel"
+include "scripts/buildorder"
+include "scripts/expansion"
+include "scripts/minerals"
+include "scripts/workers"
+include "scripts/vespene"
+include "scripts/structures"
+include "scripts/units"
+include "scripts/army"
+include "scripts/defend"
+include "scripts/research"
+include "scripts/enemybases"
+include "scripts/purchasing"
+include "scripts/focusfire"
+include "scripts/siegemicro"
+include "scripts/stimpack"
+include "scripts/spread"
+include "scripts/reaperharrassingenemybase"
+include "scripts/sweepscanner"
+include "scripts/orbitalcommand"
+include "scripts/scouting"
+include "scripts/enemystructures"
+
+
+void RegisterTriggers() {
+    ExpansionRegisterTriggers();
+    MineralsRegisterTriggers();
+    WorkersRegisterTriggers();
+    VespeneRegisterTriggers();
+    StructuresRegisterTriggers();
+    DefendRegisterTriggers();
+    UnitsRegisterTriggers();
+    ArmyRegisterTriggers();
+    ResearchRegisterTriggers();
+    EnemyBasesRegisterTriggers();
+    PurchasingRegisterTriggers();
+    FocusFireRegisterTriggers();
+    SiegeMicroRegisterTriggers();
+    StimpackRegisterTriggers();
+    SpreadRegisterTriggers();
+    ReaperRegisterTriggers();
+    OrbitalCommandRegisterTriggers();
+    SkillCheckRegisterTriggers();
+	ScoutingRegisterTriggers();
+	EnemyStructuresRegisterTriggers();
+}
+
+bool TestWaitAndExecute(bool checkConds, bool runActions) {
+    PlayerModifyPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropMinerals, c_playerPropOperAdd, 1000);
+    PlayerModifyPropertyInt(gGeneral_AnyBotTeamNumber, c_playerPropVespene, c_playerPropOperAdd, 1000);
+    PurchasingBuildTechLabAtFactory();
+
+    return true;
+}
+
+void MapInitiated() {
+    // Local Variables
+    trigger t;
+
+    // Set up fog of war
+    if (!gDebug_FogOfWarOn) {
+        VisEnable(c_visTypeFog, false);
+    }
+
+    // Set up game speed
+    if (gDebug_MaxGameSpeed) {
+        GameSetSpeedValue(c_gameSpeedFaster);
+    }
+
+    // Resister Triggers
+    RegisterTriggers();
+
+    // Initialize global arrays
+    BlackboardInitializeArrays();
+
+    // Set up scenario
+    //// Edit this to create the units that are necessary for your specific behavior test
+    //////// Create the Hatchery and Drones for the human player
+    UnitCreate(1, "Hatchery", c_unitCreateIgnorePlacement, (3 - gGeneral_AnyBotTeamNumber), PointFromName("HumanStart"), 270.0);
+    UnitCreate(1, "Overlord", 0, (3 - gGeneral_AnyBotTeamNumber), PointFromName("HumanStart"), 270.0);
+    UnitCreate(12, "Drone", 0, (3 - gGeneral_AnyBotTeamNumber), PointFromName("HumanStart"), 270.0);
+    //////// Create the Command Center and SCV's for AnyBot
+    UnitCreate(1, "CommandCenter", c_unitCreateIgnorePlacement, gGeneral_AnyBotTeamNumber, PointFromName("AnyBotStart"), 270.0);
+    UnitCreate(1, "SupplyDepot", 0, gGeneral_AnyBotTeamNumber, UnitTypePlacementFromPoint("SupplyDepot", 2, PointFromName("AnyBotSupplyDepots1"), 20), 270.0);
+    UnitCreate(12, "SCV", 0, gGeneral_AnyBotTeamNumber, PointFromName("AnyBotStart"), 270.0);
+
+    //MeleeInitUnits();
+    MeleeInitResources();
+    //PurchasingSetUpStateMachine();
+    BuildOrderInit();
+    //TestSweepScanner();
+
+    // TESTING
+//    UnitCreate(1, "Factory", c_unitCreateIgnorePlacement, gGeneral_AnyBotTeamNumber, PointFromName("AnyBotBarracks1"), 270.0);
+//    t = TriggerCreate("TestWaitAndExecute");
+//    TriggerAddEventTimeElapsed(t, 1.0, c_timeGame);
+    // END TESTING
+}

@@ -1,0 +1,46 @@
+void DebugLog(string message, string mask) {
+    bool shouldDisplay = false;
+
+    if (gDebugLog_Enabled) {
+        if (mask == "None") {
+            shouldDisplay = true;
+        } else if (mask == "Error") {
+            UIDisplayMessage(PlayerGroupAll(), c_messageAreaError, StringToText(message));
+            return;
+        } else if (mask == "Minerals") {
+            if (gDebugLog_MineralsEnabled) {
+                shouldDisplay = true;
+            }
+        } else if (mask == "Purchasing") {
+            if (gDebugLog_PurchasingEnabled) {
+                shouldDisplay = true;
+            }
+        } else if (mask == "DPS") {
+            if (gDebugLog_DPSEnabled) {
+                shouldDisplay = true;
+            }
+        } else if (mask == "Attack") {
+            if (gDebugLog_AttackEnabled) {
+                shouldDisplay = true;
+            }
+        } else if (mask == "Travel") {
+            if (gDebugLog_TravelEnabled) {
+                shouldDisplay = true;
+            }
+        } else if (mask == "Reaper") {
+            if (gDebugLog_ReaperEnabled) {
+                shouldDisplay = true;
+            }
+        } else if (mask == "SkillCheck") {
+            if (gDebugLog_SkillCheckEnabled) {
+                shouldDisplay = true;
+            }
+        } else {
+            UIDisplayMessage(PlayerGroupAll(), c_messageAreaDebug, StringToText("Unrecognized mask sent to debug log: " + mask));
+        }
+    }
+
+    if (shouldDisplay) {
+        UIDisplayMessage(PlayerGroupAll(), c_messageAreaDebug, StringToText(message));
+    }
+}

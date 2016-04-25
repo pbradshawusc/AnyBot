@@ -1,0 +1,153 @@
+bool DefendBaseAttacked(bool checkConds, bool runActions) {
+    unitgroup ug;
+    unitgroup tempUg;
+    if (UtilsIsUnitMyStructure(EventUnit()) || UnitGetType(EventUnit()) == "SCV") {
+        // My base is being attacked
+        gAnyBotBases_UnderAttack[UtilsClosestAnyBotBaseForUnit(EventUnit()) - 1] = true;
+
+        // Decide if we should defend or not
+        // TODO Decide if we should defend our base
+        // Issue an order to all units to defend
+        if (!SkillCheckCheck()) {
+            tempUg = UnitGroup("SCV", gGeneral_AnyBotTeamNumber, RegionEntireMap(), gGeneral_DefaultFilter, 0);
+            ug = UnitGroup(null, gGeneral_AnyBotTeamNumber, RegionEntireMap(), gGeneral_DefaultFilter, 0);
+            UnitGroupRemoveUnitGroup(ug, tempUg);
+            tempUg = UnitGroup("MULE", gGeneral_AnyBotTeamNumber, RegionEntireMap(), gGeneral_DefaultFilter, 0);
+            UnitGroupRemoveUnitGroup(ug, tempUg);
+
+            UnitGroupIssueOrder(ug, OrderTargetingPoint(AbilityCommand("attack", 0), UnitGetPosition(EventUnitTarget())), c_orderQueueReplace);
+        } else {
+            DebugLog("Skill Check Failed - Not Defending", "SkillCheck");
+        }
+    }
+
+    return true;
+}
+
+bool DefendUnitCreated(bool checkConds, bool runActions) {
+    string unitType = UnitGetType(EventUnitCreatedUnit());
+    int closestBase = UtilsClosestAnyBotBaseForUnit(EventUnitCreatedUnit())-1;
+    trigger t;
+
+    if (closestBase < 0 || closestBase >= gGeneral_MaxBases) {
+        DebugLog("DefendUnitCreated couldnt find closest base: " + IntToString(closestBase), "Error");
+        return true;
+    }
+
+    if (UtilsIsUnitMyStructure(EventUnitCreatedUnit()) || unitType == "SCV") {
+        if (unitType == "SCV") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 1;
+        } else if (unitType == "Armory") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 5;
+        } else if (unitType == "AutoTurret") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 3;
+        } else if (unitType == "Barracks" || unitType == "BarracksFlying") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 4;
+        } else if (unitType == "EngineeringBay") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 5;
+        } else if (unitType == "Bunker") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 2;
+        } else if (unitType == "CommandCenter" || unitType == "CommandCenterFlying") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 15;
+        } else if (unitType == "Factory" || unitType == "FactoryFlying") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 8;
+        } else if (unitType == "FusionCore") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 1;
+        } else if (unitType == "GhostAcademy") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 3;
+        } else if (unitType == "MissileTurret") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 3;
+        } else if (unitType == "OrbitalCommand" || unitType == "OrbitalCommandFlying" || unitType == "PlanetaryFortress") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 25;
+        } else if (unitType == "Reactor" || unitType == "BarracksReactor" || unitType == "FactoryReactor" || unitType == "StarportReactor") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 5;
+        } else if (unitType == "Refinery") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 7;
+        } else if (unitType == "SensorTower") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 2;
+        } else if (unitType == "Starport" || unitType == "StarportFlying") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 8;
+        } else if (unitType == "SupplyDepot" || unitType == "SupplyDepotLowered") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 1;
+        } else if (unitType == "TechLab" || unitType == "BarracksTechLab" || unitType == "FactoryTechLab" || unitType == "StarportTechLab") {
+            gAnyBotBases_ImportanceOfBase[closestBase] += 5;
+        }
+
+        t = TriggerCreate("DefendUnitDied");
+        TriggerAddEventUnitDied(t, UnitRefFromUnit(EventUnitCreatedUnit()));
+    }
+
+    return true;
+}
+
+bool DefendUnitDied(bool checkConds, bool runActions) {
+    string unitType = UnitGetType(EventUnit());
+    int closestBase = UtilsClosestAnyBotBaseForUnit(EventUnit()) - 1;
+
+    if (closestBase < 0 || closestBase >= gGeneral_MaxBases) {
+        DebugLog("DefendUnitDied couldnt find closest base: " + IntToString(closestBase), "Error");
+        return true;
+    }
+
+    if (UtilsIsUnitMyStructure(EventUnit()) || unitType == "SCV") {
+        if (unitType == "SCV") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 1;
+        } else if (unitType == "Armory") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 5;
+        } else if (unitType == "AutoTurret") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 3;
+        } else if (unitType == "Barracks" || unitType == "BarracksFlying") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 4;
+        } else if (unitType == "EngineeringBay") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 5;
+        } else if (unitType == "Bunker") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 2;
+        } else if (unitType == "CommandCenter" || unitType == "CommandCenterFlying") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 15;
+        } else if (unitType == "Factory" || unitType == "FactoryFlying") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 8;
+        } else if (unitType == "FusionCore") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 1;
+        } else if (unitType == "GhostAcademy") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 3;
+        } else if (unitType == "MissileTurret") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 3;
+        } else if (unitType == "OrbitalCommand" || unitType == "OrbitalCommandFlying" || unitType == "PlanetaryFortress") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 25;
+        } else if (unitType == "Reactor" || unitType == "BarracksReactor" || unitType == "FactoryReactor" || unitType == "StarportReactor") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 5;
+        } else if (unitType == "Refinery") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 7;
+        } else if (unitType == "SensorTower") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 2;
+        } else if (unitType == "Starport" || unitType == "StarportFlying") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 8;
+        } else if (unitType == "SupplyDepot" || unitType == "SupplyDepotLowered") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 1;
+        } else if (unitType == "TechLab" || unitType == "BarracksTechLab" || unitType == "FactoryTechLab" || unitType == "StarportTechLab") {
+            gAnyBotBases_ImportanceOfBase[closestBase] -= 5;
+        }
+    }
+
+    // Check if we're under attack anywhere and if we are no longer under attack
+    if (gAnyBotBases_UnderAttack[closestBase]) {
+        if (UnitCount(null, (3-gGeneral_AnyBotTeamNumber), RegionFromName("AnyBotBase" + IntToString(closestBase+1)), gGeneral_DefaultFilter, 0) == 0) {
+            gAnyBotBases_UnderAttack[closestBase] = false;
+            // Determine if the army should retaliate
+            ArmyShouldAttack(12, 1);
+            ArmyShouldAttack(12, 2);
+        }
+    }
+
+    return true;
+}
+
+void DefendRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("DefendBaseAttacked");
+    TriggerAddEventUnitAttacked2(t, null, null);
+
+    t = TriggerCreate("DefendUnitCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+}

@@ -1,0 +1,380 @@
+void ArmyDisbandAttackGroup(int num) {
+    int i = 0;
+    if (num == 1) {
+        for (; i < gAnyBotArmy_AttackGroupOneCount; i += 1) {
+            gAnyBotArmy_AttackGroupTwoList[gAnyBotArmy_AttackGroupTwoCount].mUnit = gAnyBotArmy_AttackGroupOneList[i].mUnit;
+            gAnyBotArmy_AttackGroupTwoList[gAnyBotArmy_AttackGroupTwoCount].mRecentBase = gAnyBotArmy_AttackGroupOneList[i].mRecentBase;
+            gAnyBotArmy_AttackGroupTwoEstimatedHealth += UnitGetPropertyInt(gAnyBotArmy_AttackGroupTwoList[gAnyBotArmy_AttackGroupTwoCount].mUnit, c_unitPropLifeMax, true);
+            gAnyBotArmy_AttackGroupTwoDPS += UtilsGetDPSForUnit(gAnyBotArmy_AttackGroupTwoList[gAnyBotArmy_AttackGroupTwoCount].mUnit);
+            gAnyBotArmy_AttackGroupTwoCount += 1;
+        }
+        gAnyBotArmy_AttackGroupOneCount = 0;
+        gAnyBotArmy_AttackGroupOneDPS = 0;
+        gAnyBotArmy_AttackGroupOneEstimatedHealth = 0;
+        gAnyBotArmy_AttackGroupOneTarget = -1;
+    } else {
+        for (; i < gAnyBotArmy_AttackGroupTwoCount; i += 1) {
+            gAnyBotArmy_AttackGroupOneList[gAnyBotArmy_AttackGroupOneCount].mUnit = gAnyBotArmy_AttackGroupTwoList[i].mUnit;
+            gAnyBotArmy_AttackGroupOneList[gAnyBotArmy_AttackGroupOneCount].mRecentBase = gAnyBotArmy_AttackGroupTwoList[i].mRecentBase;
+            gAnyBotArmy_AttackGroupOneEstimatedHealth += UnitGetPropertyInt(gAnyBotArmy_AttackGroupOneList[gAnyBotArmy_AttackGroupOneCount].mUnit, c_unitPropLifeMax, true);
+            gAnyBotArmy_AttackGroupOneDPS += UtilsGetDPSForUnit(gAnyBotArmy_AttackGroupOneList[gAnyBotArmy_AttackGroupOneCount].mUnit);
+            gAnyBotArmy_AttackGroupOneCount += 1;
+        }
+        gAnyBotArmy_AttackGroupTwoCount = 0;
+        gAnyBotArmy_AttackGroupTwoDPS = 0;
+        gAnyBotArmy_AttackGroupTwoEstimatedHealth = 0;
+        gAnyBotArmy_AttackGroupTwoTarget = -1;
+    }
+}
+
+void ArmyRetreatAttackGroup(int num) {
+    unitgroup ug = UnitGroupEmpty();
+    int i = 0;
+    if (num == 1) {
+        for (; i < gAnyBotArmy_AttackGroupOneCount; i += 1) {
+            UnitGroupAdd(ug, gAnyBotArmy_AttackGroupOneList[i].mUnit);
+        }
+        gAnyBotArmy_AttackGroupOneTarget = -1;
+    } else {
+        for (; i < gAnyBotArmy_AttackGroupTwoCount; i += 1) {
+            UnitGroupAdd(ug, gAnyBotArmy_AttackGroupTwoList[i].mUnit);
+        }
+        gAnyBotArmy_AttackGroupTwoTarget = -1;
+    }
+    UnitGroupIssueOrder(ug, OrderTargetingPoint(AbilityCommand("move", 0), PointFromName("AnyBotRally2")), c_orderQueueReplace);
+}
+
+int ArmyChanceToBeatBase(int baseNum) {
+    fixed myDPS;
+    fixed myHealth;
+    fixed enemyDPS;
+    fixed enemyHealth;
+    fixed timeToKillEnemy;
+    fixed timeToBeKilled;
+
+    if (!gEnemyBases_BaseExists[baseNum - 1]) {
+        return 0;
+    }
+
+    enemyDPS = gEnemyBases_DPSAtBase[baseNum - 1];
+    enemyHealth = gEnemyBases_EstimatedHealthAtBase[baseNum - 1];
+
+    if (gAnyBotArmy_CurrentAttackGroup == 1) {
+        myDPS = gAnyBotArmy_AttackGroupOneDPS;
+        myHealth = gAnyBotArmy_AttackGroupOneEstimatedHealth;
+    } else {
+        myDPS = gAnyBotArmy_AttackGroupTwoDPS;
+        myHealth = gAnyBotArmy_AttackGroupTwoEstimatedHealth;
+    }
+
+    if (enemyDPS == 0 || enemyHealth == 0) {
+        return 100;
+    } else if (myDPS <= 70 || myHealth <= 200) {
+        return 0;
+    }
+
+    timeToKillEnemy = enemyHealth/myDPS;
+    timeToBeKilled = myHealth/enemyDPS;
+
+    DebugLog("Time to Kill Enemy: " + FixedToString(timeToKillEnemy, 2) + " with enemy health: " + FixedToString(enemyHealth, 2) + " and my DPS: " + FixedToString(myDPS, 2), "Attack");
+    DebugLog("Time to Kill Me: " + FixedToString(timeToBeKilled, 2) + " with my health: " + FixedToString(myHealth, 2) + " and enemy DPS: " + FixedToString(enemyDPS, 2), "Attack");
+    DebugLog("Chance to beat base: " + IntToString(baseNum) + " is: " + FixedToString(Floor(timeToBeKilled - timeToKillEnemy) * 2, 2), "Attack");
+
+    if (timeToKillEnemy > timeToBeKilled) {
+        return 0;
+    } else {
+        return FixedToInt(MinF(100, Floor(timeToBeKilled - timeToKillEnemy) * 2));
+    }
+}
+
+int ArmyChanceToBeatGlobal() {
+    fixed myDPS;
+    fixed myHealth;
+    fixed enemyDPS;
+    fixed enemyHealth;
+    fixed timeToKillEnemy;
+    fixed timeToBeKilled;
+
+    enemyDPS = gEnemyArmy_GlobalDPS;
+    enemyHealth = gEnemyArmy_GlobalEstimatedHealth;
+
+    if (gAnyBotArmy_CurrentAttackGroup == 1) {
+        myDPS = gAnyBotArmy_AttackGroupOneDPS;
+        myHealth = gAnyBotArmy_AttackGroupOneEstimatedHealth;
+    } else {
+        myDPS = gAnyBotArmy_AttackGroupTwoDPS;
+        myHealth = gAnyBotArmy_AttackGroupTwoEstimatedHealth;
+    }
+
+    if (enemyDPS == 0 || enemyHealth == 0) {
+        return 100;
+    } else if (myDPS == 0 || myHealth == 0) {
+        return 0;
+    }
+
+    timeToKillEnemy = enemyHealth/myDPS;
+    timeToBeKilled = myHealth/enemyDPS;
+
+    DebugLog("Time to Kill Enemy: " + FixedToString(timeToKillEnemy, 2) + " with enemy health: " + FixedToString(enemyHealth, 2) + " and my DPS: " + FixedToString(myDPS, 2), "Attack");
+    DebugLog("Time to Kill Me: " + FixedToString(timeToBeKilled, 2) + " with my health: " + FixedToString(myHealth, 2) + " and enemy DPS: " + FixedToString(enemyDPS, 2), "Attack");
+    DebugLog("Chance to beat global is: " + FixedToString(Floor(timeToBeKilled - timeToKillEnemy) * 2, 2), "Attack");
+
+    if (timeToKillEnemy > timeToBeKilled) {
+        return 0;
+    } else {
+        return FixedToInt(MinF(100, Floor(timeToBeKilled - timeToKillEnemy) * 2));
+    }
+}
+
+bool ArmyShouldAttack(int threshold, int attackGroup) {
+    int i = 1;
+    int baseToAttack = -1;
+    int attackSuccess = 0;
+    unitgroup ug;
+    unitgroup backup;
+    bool temp;
+
+    int globalSuccess = ArmyChanceToBeatGlobal();
+
+    if (SkillCheckCheck()) {
+        DebugLog("Skill Check Failed - Cancelling Attack", "SkillCheck");
+        if (attackGroup == 1 && (gAnyBotArmy_AttackGroupOneCount < 10 || gAnyBotArmy_AttackGroupOneCount <= 0.75 * gAnyBotArmy_AttackGroupTwoCount)) {
+            //DebugLog("Group1 Failed AttackGroupOneCount: " + IntToString(gAnyBotArmy_AttackGroupOneCount) + " AttackGroupTwoCount: " + IntToString(gAnyBotArmy_AttackGroupTwoCount), "None");
+            DebugLog("Attack Group 1 should not attack.", "Attack");
+            return false;
+        } else if (attackGroup == 2 && (gAnyBotArmy_AttackGroupTwoCount < 10 || gAnyBotArmy_AttackGroupTwoCount <= 0.75 * gAnyBotArmy_AttackGroupOneCount)) {
+            //DebugLog("Group2 Failed AttackGroupOneCount: " + IntToString(gAnyBotArmy_AttackGroupOneCount) + " AttackGroupTwoCount: " + IntToString(gAnyBotArmy_AttackGroupTwoCount), "None");
+            DebugLog("Attack Group 2 should not attack.", "Attack");
+            return false;
+        }
+    }
+
+    // Make sure our attack group is large enough
+    if (attackGroup == 1 && (gAnyBotArmy_AttackGroupOneCount < 10 || gAnyBotArmy_AttackGroupOneCount <= 0.75 * gAnyBotArmy_AttackGroupTwoCount)) {
+        return false;
+    } else if (attackGroup == 2 && (gAnyBotArmy_AttackGroupTwoCount < 10 || gAnyBotArmy_AttackGroupTwoCount <= 0.75 * gAnyBotArmy_AttackGroupOneCount)) {
+        return false;
+    }
+
+    // Order of base attacks
+    //// 4 -> 3 -> 1 -> 2
+    if (gEnemyBases_BaseExists[3]) {
+        // We must attack this first
+        attackSuccess = ArmyChanceToBeatBase(4);
+        baseToAttack = 4;
+    } else if (gEnemyBases_BaseExists[2]) {
+        // We must attack this before proceeding
+        attackSuccess = ArmyChanceToBeatBase(3);
+        baseToAttack = 3;
+    } else if (gEnemyBases_BaseExists[0]) {
+        // We must attack this before proceeding
+        attackSuccess = ArmyChanceToBeatBase(1);
+        baseToAttack = 1;
+        if (gEnemyBases_EstimatedHealthAtBase[0] <= 100 && gEnemyBases_BaseExists[1]) {
+            attackSuccess = ArmyChanceToBeatBase(2);
+            baseToAttack = 2;
+        }
+    } else {
+        // We can finally reach base 2
+        attackSuccess = ArmyChanceToBeatBase(2);
+        baseToAttack = 2;
+    }
+
+    temp = SkillCheckCheck();
+    if (baseToAttack != -1 && ((attackSuccess > threshold && globalSuccess > -5) || temp)) {
+        if (temp) {
+            DebugLog("Skill Check Failed - Initiating Attack.", "SkillCheck");
+        }
+        // We should attack
+        DebugLog("Sending Attack Base: " + IntToString(baseToAttack) + " Attack Success: " + IntToString(attackSuccess) + " Global Success: " + IntToString(globalSuccess), "Attack");
+        if (gAnyBotArmy_CurrentAttackGroup == attackGroup) {
+            ArmyDisbandAttackGroup(3-attackGroup);
+        }
+
+        i = 0;
+        if (attackGroup == 1) {
+            gAnyBotArmy_AttackGroupOneTarget = baseToAttack;
+            ug = UnitGroupEmpty();
+            backup = UnitGroupEmpty();
+            for (; i < gAnyBotArmy_AttackGroupOneCount; i += 1) {
+                if (DistanceBetweenPoints(UnitGetPosition(gAnyBotArmy_AttackGroupOneList[i].mUnit), PointFromName("HumanBase"+IntToString(baseToAttack))) < 30) {
+                    UnitGroupAdd(backup, gAnyBotArmy_AttackGroupOneList[i].mUnit);
+                } else {
+                    UnitGroupAdd(ug, gAnyBotArmy_AttackGroupOneList[i].mUnit);
+                }
+            }
+            DebugLog("Send Group 1 to Attack", "Attack");
+        } else {
+            gAnyBotArmy_AttackGroupTwoTarget = baseToAttack;
+            ug = UnitGroupEmpty();
+            backup = UnitGroupEmpty();
+            for (; i < gAnyBotArmy_AttackGroupTwoCount; i += 1) {
+                if (DistanceBetweenPoints(UnitGetPosition(gAnyBotArmy_AttackGroupTwoList[i].mUnit), PointFromName("HumanBase"+IntToString(baseToAttack))) < 30) {
+                    UnitGroupAdd(backup, gAnyBotArmy_AttackGroupTwoList[i].mUnit);
+                } else {
+                    UnitGroupAdd(ug, gAnyBotArmy_AttackGroupTwoList[i].mUnit);
+                }
+            }
+            DebugLog("Send Group 2 to Attack", "Attack");
+        }
+        TravelEmbark(ug, PointFromName("HumanBase"+IntToString(baseToAttack)));
+        UnitGroupIssueOrder(backup, OrderTargetingPoint(AbilityCommand("attack", 0), PointFromName("HumanBase"+IntToString(baseToAttack))), c_orderQueueReplace);
+
+        // We have issued the attack order, we should alter which attack group we are creating
+        gAnyBotArmy_CurrentAttackGroup = (3-attackGroup);
+        if (gAnyBotArmy_CurrentAttackGroup == 1) {
+            gAnyBotArmy_AttackGroupOneTarget = -1;
+        } else {
+            gAnyBotArmy_AttackGroupTwoTarget = -1;
+        }
+        return true;
+    }
+
+    DebugLog("Group " + IntToString(attackGroup) + " failed to attack. Base: " + IntToString(baseToAttack) + " Success: " + IntToString(attackSuccess) + " Global: " + IntToString(globalSuccess), "Attack");
+    return false;
+}
+
+bool ArmyUnitCreated(bool checkConds, bool runActions) {
+    fixed dps = 0;
+    trigger t;
+    int i = 0;
+
+    if (UtilsIsUnitMyUnit(EventUnitCreatedUnit()) && UnitGetType(EventUnitCreatedUnit()) != "SCV" && UnitGetType(EventUnitCreatedUnit()) != "MULE"  && UnitGetType(EventUnitCreatedUnit()) != "Reaper") {
+        // The created unit is one of my army units
+        // Increase the global DPS
+        dps = UtilsGetDPSForUnit(EventUnitCreatedUnit());
+        DebugLog("Created unit dps: " + FixedToString(dps, 2), "DPS");
+        gAnyBotArmy_GlobalDPS += dps;
+
+        // Add this unit to the current attack group
+        if (gAnyBotArmy_CurrentAttackGroup == 1) {
+            gAnyBotArmy_AttackGroupOneList[gAnyBotArmy_AttackGroupOneCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotArmy_AttackGroupOneList[gAnyBotArmy_AttackGroupOneCount].mRecentBase = -1;
+            gAnyBotArmy_AttackGroupOneList[gAnyBotArmy_AttackGroupOneCount].mQueueCount = 0;
+            gAnyBotArmy_AttackGroupOneCount += 1;
+            gAnyBotArmy_AttackGroupOneDPS += dps;
+            gAnyBotArmy_AttackGroupOneEstimatedHealth += IntToFixed(UnitGetPropertyInt(EventUnitCreatedUnit(), c_unitPropLifeMax, true));
+        } else {
+            gAnyBotArmy_AttackGroupTwoList[gAnyBotArmy_AttackGroupTwoCount].mUnit = EventUnitCreatedUnit();
+            gAnyBotArmy_AttackGroupTwoList[gAnyBotArmy_AttackGroupTwoCount].mRecentBase = -1;
+            gAnyBotArmy_AttackGroupTwoList[gAnyBotArmy_AttackGroupTwoCount].mQueueCount = 0;
+            gAnyBotArmy_AttackGroupTwoCount += 1;
+            gAnyBotArmy_AttackGroupTwoDPS += dps;
+            gAnyBotArmy_AttackGroupTwoEstimatedHealth += IntToFixed(UnitGetPropertyInt(EventUnitCreatedUnit(), c_unitPropLifeMax, true));
+        }
+
+        // Register the dying trigger
+        t = TriggerCreate("ArmyUnitDied");
+        TriggerAddEventUnitDied(t, UnitRefFromUnit(EventUnitCreatedUnit()));
+
+        // Determine if it is time to attack
+        if (ArmyShouldAttack(12, gAnyBotArmy_CurrentAttackGroup)) {
+            return true;
+        }
+
+        // Move to the appropriate rally point
+        i = 1;
+        for (; i < gGeneral_MaxBases; i += 1) {
+            if (gAnyBotBases_ExpansionAtBase[i]) {
+                UnitIssueOrder(EventUnitCreatedUnit(), OrderTargetingPoint(AbilityCommand("move", 0), PointFromName("AnyBotRally2")), c_orderQueueReplace);
+                return true;
+            }
+        }
+        UnitIssueOrder(EventUnitCreatedUnit(), OrderTargetingPoint(AbilityCommand("move", 0), PointFromName("AnyBotRally1")), c_orderQueueReplace);
+        return true;
+    }
+
+    return true;
+}
+
+bool ArmyUnitDied(bool checkConds, bool runActions) {
+    fixed dps = 0;
+    int i = 0;
+    bool foundUnit = false;
+    if (UtilsIsUnitMyUnit(EventUnit()) && UnitGetType(EventUnit()) != "SCV" && UnitGetType(EventUnit()) != "MULE") {
+        // The created unit is one of my army units
+        // Increase the global DPS
+        dps = UtilsGetDPSForUnit(EventUnit());
+        gAnyBotArmy_GlobalDPS -= dps;
+
+        // Remove this unit from its attack group
+        for (; i < gAnyBotArmy_AttackGroupOneCount; i += 1) {
+            if (gAnyBotArmy_AttackGroupOneList[i].mUnit == EventUnit()) {
+                foundUnit = true;
+                break;
+            }
+        }
+        if (foundUnit) {
+            for (; i < gAnyBotArmy_AttackGroupOneCount; i += 1) {
+                gAnyBotArmy_AttackGroupOneList[i].mUnit = gAnyBotArmy_AttackGroupOneList[i+1].mUnit;
+                gAnyBotArmy_AttackGroupOneList[i].mRecentBase = gAnyBotArmy_AttackGroupOneList[i+1].mRecentBase;
+                gAnyBotArmy_AttackGroupOneList[i].mQueueCount = gAnyBotArmy_AttackGroupOneList[i+1].mQueueCount;
+            }
+            gAnyBotArmy_AttackGroupOneCount -= 1;
+            gAnyBotArmy_AttackGroupOneDPS -= dps;
+            gAnyBotArmy_AttackGroupOneEstimatedHealth -= IntToFixed(UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true));
+            return true;
+        }
+
+        i = 0;
+        for (; i < gAnyBotArmy_AttackGroupTwoCount; i += 1) {
+            if (gAnyBotArmy_AttackGroupTwoList[i].mUnit == EventUnit()) {
+                break;
+            }
+        }
+        for (; i < gAnyBotArmy_AttackGroupTwoCount; i += 1) {
+            gAnyBotArmy_AttackGroupTwoList[i].mUnit = gAnyBotArmy_AttackGroupTwoList[i+1].mUnit;
+            gAnyBotArmy_AttackGroupTwoList[i].mRecentBase = gAnyBotArmy_AttackGroupTwoList[i+1].mRecentBase;
+            gAnyBotArmy_AttackGroupTwoList[i].mQueueCount = gAnyBotArmy_AttackGroupTwoList[i+1].mQueueCount;
+        }
+        gAnyBotArmy_AttackGroupTwoCount -= 1;
+        gAnyBotArmy_AttackGroupTwoDPS -= dps;
+        gAnyBotArmy_AttackGroupTwoEstimatedHealth -= IntToFixed(UnitGetPropertyInt(EventUnit(), c_unitPropLifeMax, true));
+    }
+
+    return true;
+}
+
+bool ArmyEnemyDied(bool checkConds, bool runActions) {
+    int base;
+    if (!UtilsIsUnitOwnedByAnyBot(EventUnit())) {
+        // Check if this unit is in a base being attacked
+        base = UtilsClosestEnemyBaseForUnit(EventUnit());
+        if (base == gAnyBotArmy_AttackGroupOneTarget) {
+            DebugLog("Check continue Attack with Group 1", "Attack");
+            if (!ArmyShouldAttack(-5, 1)) {
+                //ArmyRetreatAttackGroup(1);
+                //ArmyDisbandAttackGroup(1);
+            }
+        }
+        if (base == gAnyBotArmy_AttackGroupTwoTarget) {
+            DebugLog("Check continue Attack with Group 2", "Attack");
+            if (!ArmyShouldAttack(-5, 2)) {
+                //ArmyRetreatAttackGroup(2);
+                //ArmyDisbandAttackGroup(2);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool ArmyPeriodicCheck(bool checkConds, bool runActions) {
+    ArmyShouldAttack(12, 1);
+    ArmyShouldAttack(12, 2);
+
+    return true;
+}
+
+void ArmyRegisterTriggers() {
+    trigger t;
+
+    t = TriggerCreate("ArmyUnitCreated");
+    TriggerAddEventUnitCreated(t, null, null, null);
+
+    t = TriggerCreate("ArmyEnemyDied");
+    TriggerAddEventUnitDied(t, null);
+
+    t = TriggerCreate("ArmyPeriodicCheck");
+    TriggerAddEventTimePeriodic(t, 15, c_timeGame);
+}

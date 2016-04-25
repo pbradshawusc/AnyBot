@@ -1,0 +1,354 @@
+bool ResearchStimPackStarted(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedStimPack = true;
+
+    return true;
+}
+
+bool ResearchStimPackCompleted(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveStimPack = true;
+
+    return true;
+}
+
+bool ResearchStimPackCancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedStimPack = false;
+
+    return true;
+}
+
+void ResearchStimPackTriggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchStimPackStarted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("BarracksTechLabResearch", 0), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchStimPackCompleted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("BarracksTechLabResearch", 0), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchStimPackCancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("BarracksTechLabResearch", 0), c_unitAbilStageCancel, true);
+}
+
+bool ResearchCombatShieldStarted(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedCombatShield = true;
+
+    return true;
+}
+
+bool ResearchCombatShieldCompleted(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveCombatShield = true;
+
+    return true;
+}
+
+bool ResearchCombatShieldCancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedCombatShield = false;
+
+    return true;
+}
+
+void ResearchCombatShieldTriggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchCombatShieldStarted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("BarracksTechLabResearch", 1), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchCombatShieldCompleted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("BarracksTechLabResearch", 1), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchCombatShieldCancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("BarracksTechLabResearch", 1), c_unitAbilStageCancel, true);
+}
+
+bool ResearchTerranBuildingArmorStarted(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranBuildingArmor = true;
+
+    return true;
+}
+
+bool ResearchTerranBuildingArmorCompleted(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveTerranBuildingArmor = true;
+
+    return true;
+}
+
+bool ResearchTerranBuildingArmorCancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranBuildingArmor = false;
+
+    return true;
+}
+
+void ResearchTerranBuildingArmorTriggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchTerranBuildingArmorStarted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 1), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchTerranBuildingArmorCompleted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 1), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchTerranBuildingArmorCancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 1), c_unitAbilStageCancel, true);
+}
+
+bool ResearchNeosteelFrameStarted(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedNeosteelFrame = true;
+
+    return true;
+}
+
+bool ResearchNeosteelFrameCompleted(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveNeosteelFrame = true;
+
+    return true;
+}
+
+bool ResearchNeosteelFrameCancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedNeosteelFrame = false;
+
+    return true;
+}
+
+void ResearchNeosteelFrameTriggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchNeosteelFrameStarted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 5), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchNeosteelFrameCompleted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 5), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchNeosteelFrameCancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 5), c_unitAbilStageCancel, true);
+}
+
+bool ResearchHiSecAutoTrackingStarted(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedHiSecAutoTracking = true;
+
+    return true;
+}
+
+bool ResearchHiSecAutoTrackingCompleted(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveHiSecAutoTracking = true;
+
+    return true;
+}
+
+bool ResearchHiSecAutoTrackingCancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedHiSecAutoTracking = false;
+
+    return true;
+}
+
+void ResearchHiSecAutoTrackingTriggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchHiSecAutoTrackingStarted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 0), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchHiSecAutoTrackingCompleted");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 0), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchHiSecAutoTrackingCancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 0), c_unitAbilStageCancel, true);
+}
+
+bool ResearchTerranInfantryArmorsLevel1Started(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryArmorsLevel1 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryArmorsLevel1Completed(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveTerranInfantryArmorsLevel1 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryArmorsLevel1Cancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryArmorsLevel1 = false;
+
+    return true;
+}
+
+void ResearchTerranInfantryArmorsLevel1Triggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel1Started");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 6), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel1Completed");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 6), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel1Cancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 6), c_unitAbilStageCancel, true);
+}
+
+bool ResearchTerranInfantryArmorsLevel2Started(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryArmorsLevel2 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryArmorsLevel2Completed(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveTerranInfantryArmorsLevel2 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryArmorsLevel2Cancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryArmorsLevel2 = false;
+
+    return true;
+}
+
+void ResearchTerranInfantryArmorsLevel2Triggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel2Started");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 7), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel2Completed");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 7), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel2Cancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 7), c_unitAbilStageCancel, true);
+}
+
+bool ResearchTerranInfantryArmorsLevel3Started(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryArmorsLevel3 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryArmorsLevel3Completed(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveTerranInfantryArmorsLevel3 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryArmorsLevel3Cancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryArmorsLevel3 = false;
+
+    return true;
+}
+
+void ResearchTerranInfantryArmorsLevel3Triggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel3Started");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 8), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel3Completed");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 8), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchTerranInfantryArmorsLevel3Cancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 8), c_unitAbilStageCancel, true);
+}
+
+bool ResearchTerranInfantryWeaponsLevel1Started(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryWeaponsLevel1 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryWeaponsLevel1Completed(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveTerranInfantryWeaponsLevel1 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryWeaponsLevel1Cancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryWeaponsLevel1 = false;
+
+    return true;
+}
+
+void ResearchTerranInfantryWeaponsLevel1Triggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel1Started");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 2), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel1Completed");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 2), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel1Cancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 2), c_unitAbilStageCancel, true);
+}
+
+bool ResearchTerranInfantryWeaponsLevel2Started(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryWeaponsLevel2 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryWeaponsLevel2Completed(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveTerranInfantryWeaponsLevel2 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryWeaponsLevel2Cancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryWeaponsLevel2 = false;
+
+    return true;
+}
+
+void ResearchTerranInfantryWeaponsLevel2Triggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel2Started");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 3), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel2Completed");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 3), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel2Cancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 3), c_unitAbilStageCancel, true);
+}
+
+bool ResearchTerranInfantryWeaponsLevel3Started(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryWeaponsLevel3 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryWeaponsLevel3Completed(bool checkConds, bool runActions) {
+    gAnyBotResearch_HaveTerranInfantryWeaponsLevel3 = true;
+
+    return true;
+}
+
+bool ResearchTerranInfantryWeaponsLevel3Cancelled(bool checkConds, bool runActions) {
+    gAnyBotResearch_StartedTerranInfantryWeaponsLevel3 = false;
+
+    return true;
+}
+
+void ResearchTerranInfantryWeaponsLevel3Triggers() {
+    trigger t;
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel3Started");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 4), c_unitAbilStageExecute, true);
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel3Completed");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 4), c_unitAbilStageComplete, true);
+
+    t = TriggerCreate("ResearchTerranInfantryWeaponsLevel3Cancelled");
+    TriggerAddEventUnitAbility(t, null, AbilityCommand("EngineeringBayResearch", 4), c_unitAbilStageCancel, true);
+}
+
+void ResearchRegisterTriggers() {
+    ResearchStimPackTriggers();
+    ResearchCombatShieldTriggers();
+    ResearchTerranBuildingArmorTriggers();
+    ResearchNeosteelFrameTriggers();
+    ResearchHiSecAutoTrackingTriggers();
+    ResearchTerranInfantryArmorsLevel1Triggers();
+    ResearchTerranInfantryArmorsLevel2Triggers();
+    ResearchTerranInfantryArmorsLevel3Triggers();
+    ResearchTerranInfantryWeaponsLevel1Triggers();
+    ResearchTerranInfantryWeaponsLevel2Triggers();
+    ResearchTerranInfantryWeaponsLevel3Triggers();
+}

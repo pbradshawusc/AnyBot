@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=Aprovecha que las expansiones de este mapa son más accesibles para crear un ejército grande rápidamente.
+DocInfo/DescShort=1 vs. 1
+DocInfo/Name=Torres crepusculares
+MapInfo/Player00/Name=Neutral
+MapInfo/Player01/Name=Jugador 1
+MapInfo/Player02/Name=Jugador 2
+MapInfo/Player03/Name=Hostil
+MapInfo/Player04/Name=Jugador 4
+MapInfo/Player05/Name=Hostil

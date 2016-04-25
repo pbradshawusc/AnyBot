@@ -1,0 +1,9 @@
+﻿DocInfo/DescLong=Wykorzystaj to, że miejsca pod ekspansję na tej mapie są łatwo dostępne, aby w szybki i prosty sposób stworzyć dużą armię.
+DocInfo/DescShort=1na1
+DocInfo/Name=Wieże Zmierzchu
+MapInfo/Player00/Name=Neutralna
+MapInfo/Player01/Name=Gracz 1
+MapInfo/Player02/Name=Gracz 2
+MapInfo/Player03/Name=Wróg
+MapInfo/Player04/Name=Gracz 4
+MapInfo/Player05/Name=Wróg
